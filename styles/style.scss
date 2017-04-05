@@ -2,11 +2,26 @@ $small: 600px;
 $medium: 1024px;
 $grid-columns: 12;
 
+$content-height: 160px;
+$chat-constant-width:400px;
+
+* {
+  font-family: "Lucida Sans", sans-serif;
+  font-size:12px;
+  padding:1px;
+  margin:1px;
+}
+
 // RESPONSIVE
 @media (max-width: $small) {
   @for $i from 1 through 12 {
     .column-small-#{$i} {
       width: 100% / 12 * $i;
+      border:1px solid #ff22cf;
+    }
+    .chat {
+      width: 100%;
+      border:1px solid #ff0e10;
     }
   }
 }
@@ -14,6 +29,12 @@ $grid-columns: 12;
   @for $i from 1 through 12 {
     .column-medium-#{$i} {
       width: 100% / 12 * $i;
+      border:1px solid #ff22cf;
+    }
+    .chat {
+      width: $chat-constant-width;
+      border:1px solid #ff0e10;
+
     }
   }
 }
@@ -21,7 +42,41 @@ $grid-columns: 12;
   @for $i from 1 through 12 {
     .column-big-#{$i} {
       width: 100% / 12 * $i;
+      border: 1px solid #ff22cf;
+    }
+    .chat {
+      width: $chat-constant-width;
+      border: 1px solid #ff0e10;
     }
   }
 }
 
+p {
+  line-height:18px;
+  width: 100%;
+}
+
+#chat-window {
+  background:#ddd;
+  border:1px solid #CCC;
+  border-radius:5px;
+  overflow-y: scroll;
+  padding:5px;
+  margin-top:10px;
+  height: $content-height;
+}
+
+#chat-status {
+  width:25%;
+  display:block;
+  float:left;
+  margin-top:15px;
+}
+
+#chat-input {
+  border:1px solid #ccc;
+  border-radius:2px;
+  margin-top:10px;
+  padding:5px;
+  width: 65%;
+}

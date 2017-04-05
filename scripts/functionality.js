@@ -2,9 +2,9 @@ $(function () {
     "use strict";
 
     // for better performance - to avoid searching in DOM
-    var content = $('#content');
-    var input = $('#input');
-    var status = $('#status');
+    var content = $('#chat_window');
+    var input = $('#chat-input');
+    var status = $('#chat-status');
 
     // my color assigned by the server
     var myColor = false;
