@@ -2,7 +2,7 @@ $(function () {
     "use strict";
 
     // for better performance - to avoid searching in DOM
-    var content = $('#chat_window');
+    var content = $('#chat-window');
     var input = $('#chat-input');
     var status = $('#chat-status');
 
