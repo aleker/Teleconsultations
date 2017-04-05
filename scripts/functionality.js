@@ -1,14 +1,10 @@
 $(function () {
     "use strict";
-
-    // for better performance - to avoid searching in DOM
     var content = $('#chat_window');
     var input = $('#chat-input');
     var status = $('#chat-status');
 
-    // my color assigned by the server
     var myColor = false;
-    // my name sent to the server
     var myName = false;
 
     // if user is running mozilla then use it's built-in WebSocket
@@ -24,7 +20,7 @@ $(function () {
     }
 
     // open connection
-    var connection = new WebSocket('ws://127.0.0.1:1337');
+    var connection = new WebSocket('ws://' + window.location.host);
 
     connection.onopen = function () {
         // first we want users to enter their names

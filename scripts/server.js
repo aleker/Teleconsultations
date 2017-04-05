@@ -1,23 +1,24 @@
 // http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 "use strict";
 
-// Optional. You will see this name in eg. 'ps' or 'top' command
-process.title = 'node-chat';
-
-// Port where we'll run the websocket server
-var webSocketsServerPort = 1337;
-
 // websocket and http servers
-var webSocketServer = require('websocket').server;
-var http = require('http');
+const webSocketServer = require('websocket').server;
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+const path = require('path');
+
+// CONFIGURATION
+const port = 8080;
+const hostname = '0.0.0.0';
 
 /**
  * Global variables
  */
 // latest 100 messages
-var history = [ ];
+let history = [ ];
 // list of currently connected clients (users)
-var clients = [ ];
+let clients = [ ];
 
 /**
  * Helper function for escaping input strings
@@ -33,14 +34,69 @@ var colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
 colors.sort(function(a,b) { return Math.random() > 0.5; } );
 
 /**
+ * handler for HTTP server - first connection with client
+ */
+const requestHandler = (request, response) => {
+    // Parse the request containing file name
+    const pathname = url.parse(request.url).pathname;
+    // based on the URL path, extract the file extention. e.g. .js, .doc, ...
+    const fileExtension = path.parse(pathname).ext;
+    // maps file extention to MIME typere
+    const map = {
+        '.ico': 'image/x-icon',
+        '.html': 'text/html',
+        '.js': 'text/javascript',
+        '.json': 'application/json',
+        '.css': 'text/css',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.wav': 'audio/wav',
+        '.mp3': 'audio/mpeg',
+        '.svg': 'image/svg+xml',
+        '.pdf': 'application/pdf',
+        '.doc': 'application/msword'
+    };
+    fs.exists("../" + pathname, function (exist) {
+        // if the file is not found, return 404
+        if (!exist) {
+            response.statusCode = 404;
+            response.end(`File ${pathname} not found!`);
+            return;
+        }
+        // if a directory search for index file is matching the extension
+        // Read the requested file content from file system
+        fs.readFile("../" + pathname.substr(1), function (err, data) {
+            if (err) {
+                console.log((new Date()) + err);
+                // HTTP Status: 500 : INTERNAL SERVER ERROR
+                response.statusCode = 500;
+                response.end(`Error getting the file: ${err}.`);
+            } else {
+                //Page found -> HTTP Status: 200 : OK
+                response.writeHead(200, {'Content-Type': map[fileExtension] || 'text/plain'});
+                // Write the content of the file to response body
+                response.write(data.toString(), 'utf-8');
+                // Send the response body
+                response.end();
+            }
+        });
+    });
+};
+
+/**
  * HTTP server
  */
-var server = http.createServer(function(request, response) {
-    // Not important for us. We're writing WebSocket server, not HTTP server
-});
-server.listen(webSocketsServerPort, function() {
-    console.log((new Date()) + " Server is listening on port " + webSocketsServerPort);
-});
+const server = http.createServer(requestHandler);
+if (!server.listen(port, hostname, function () {
+        try {
+            console.log((new Date()) + " Server is listening on port " + port);
+        }
+        catch (err) {
+            console.log("Problem with server ip. Check ip configuration.");
+            return false;
+        }
+        return true;
+    })) return;
 
 /**
  * WebSocket server
@@ -55,9 +111,6 @@ var wsServer = new webSocketServer({
 // tries to connect to the WebSocket server
 wsServer.on('request', function(request) {
     console.log((new Date()) + ' Connection from origin ' + request.origin + '.');
-
-    // accept connection - you should check 'request.origin' to make sure that
-    // client is connecting from your website
     // (http://en.wikipedia.org/wiki/Same_origin_policy)
     var connection = request.accept(null, request.origin);
     // we need to know client index to remove them on 'close' event
