@@ -1,0 +1,27 @@
+$small: 600px;
+$medium: 1024px;
+$grid-columns: 12;
+
+// RESPONSIVE
+@media (max-width: $small) {
+  @for $i from 1 through 12 {
+    .column-small-#{$i} {
+      width: 100% / 12 * $i;
+    }
+  }
+}
+@media (min-width: $small) and (max-width: $medium) {
+  @for $i from 1 through 12 {
+    .column-medium-#{$i} {
+      width: 100% / 12 * $i;
+    }
+  }
+}
+@media (min-width: $medium) {
+  @for $i from 1 through 12 {
+    .column-big-#{$i} {
+      width: 100% / 12 * $i;
+    }
+  }
+}
+
