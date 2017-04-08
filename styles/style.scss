@@ -12,6 +12,11 @@ $chat-constant-width:400px;
   margin:1px;
 }
 
+p {
+  line-height:18px;
+  width: 100%;
+}
+
 // RESPONSIVE
 @media (max-width: $small) {
   @for $i from 1 through 12 {
@@ -21,7 +26,6 @@ $chat-constant-width:400px;
     }
     .chat {
       width: 100%;
-      border:1px solid #ff0e10;
     }
   }
 }
@@ -33,7 +37,6 @@ $chat-constant-width:400px;
     }
     .chat {
       width: $chat-constant-width;
-      border:1px solid #ff0e10;
 
     }
   }
@@ -46,37 +49,39 @@ $chat-constant-width:400px;
     }
     .chat {
       width: $chat-constant-width;
-      border: 1px solid #ff0e10;
     }
   }
 }
 
-p {
-  line-height:18px;
-  width: 100%;
-}
+/**
+ * Chat display setting
+ */
 
-#chat-window {
-  background:#ddd;
-  border:1px solid #CCC;
-  border-radius:5px;
-  overflow-y: scroll;
-  padding:5px;
-  margin-top:10px;
-  height: $content-height;
-}
+.chat {
+  // border: 1px solid #ff0e10;
 
-#chat-status {
-  width:25%;
-  display:block;
-  float:left;
-  margin-top:15px;
-}
+  #chat-window {
+    background: #ddd;
+    border: 1px solid #CCC;
+    border-radius: 5px;
+    overflow-y: scroll;
+    padding: 5px;
+    margin-top: 10px;
+    height: $content-height;
 
-#chat-input {
-  border:1px solid #ccc;
-  border-radius:2px;
-  margin-top:10px;
-  padding:5px;
-  width: 65%;
+    #chat-status {
+      width: 25%;
+      display: block;
+      float: left;
+      margin-top: 15px;
+    }
+
+    #chat-input {
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      margin-top: 10px;
+      padding: 5px;
+      width: 65%;
+    }
+  }
 }
