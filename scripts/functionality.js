@@ -16,15 +16,15 @@ $(function () {
 
     // if browser doesn't support WebSocket, just show some notification and exit
     if (!window.WebSocket) {
-        content.html($('<p>', { text: 'Sorry, but your browser doesn\'t '
-        + 'support WebSockets.'} ));
+        content.html($('<p>', { text: 'Sorry, but your browser doesn\'t support WebSockets.'} ));
         input.hide();
         $('span').hide();
         return;
     }
 
     // open connection
-    var connection = new WebSocket('ws://127.0.0.1:1337');
+    console.log("Connecting to host: " + window.location.host);
+    var connection = new WebSocket('ws://' + window.location.host);
 
     connection.onopen = function () {
         // first we want users to enter their names
