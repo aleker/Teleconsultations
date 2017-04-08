@@ -57,17 +57,20 @@ $(function () {
             status.text(myName + ': ').css('color', myColor);
             input.removeAttr('disabled').focus();
             // from now user can start sending messages
-        } else if (json.type === 'history') { // entire message history
+        }
+        else if (json.type === 'history') { // entire message history
             // insert every single message to the chat window
             for (var i=0; i < json.data.length; i++) {
                 addMessage(json.data[i].author, json.data[i].text,
                     json.data[i].color, new Date(json.data[i].time));
             }
-        } else if (json.type === 'message') { // it's a single message
-            input.removeAttr('disabled'); // let the user write another message
+        }
+        else if (json.type === 'message') { // it's a single message
+            input.removeAttr('disabled').focus(); // let the user write another message
             addMessage(json.data.author, json.data.text,
                 json.data.color, new Date(json.data.time));
-        } else {
+        }
+        else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json);
         }
     };
