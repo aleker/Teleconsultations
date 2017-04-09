@@ -1,3 +1,4 @@
+var connection = false;
 $(function () {
     "use strict";
 
@@ -33,7 +34,7 @@ $(function () {
 
     // open connection
     console.log("Connecting to host: " + window.location.host);
-    const connection = new WebSocket('ws://' + window.location.host);
+    connection = new WebSocket('ws://' + window.location.host);
 
     /**
      * Connection listeners. Receive message from server and handle errors.
@@ -79,10 +80,16 @@ $(function () {
                     json_message.data[i].color, new Date(json_message.data[i].time));
             }
         }
-        else if (json_message.type === 'message') { // it's a single message
+        else if (json_message.type === 'chatMessageOnBroadcast') { // it's a single message
             chat.input.removeAttr('disabled').focus(); // let the user write another message
             addMessage(json_message.data.author, json_message.data.text,
                 json_message.data.color, new Date(json_message.data.time));
+        }
+        else if (json_message.type === 'image') {
+            $('#uploaded_image')
+                .attr('src', json_message.data)
+                .width(150)
+                .height(200);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
@@ -99,17 +106,23 @@ $(function () {
             if (!msg) {
                 return;
             }
+
+            let jsonType = false;
+            // we know that the first message sent from a user their name
+            if (thisUser.name === false) {
+                thisUser.name = msg;
+                jsonType = 'clientName';
+            }
+            else jsonType = 'chatMessage';
+
+            const json = JSON.stringify({type: jsonType, data: msg});
+
             // send the message as an ordinary text
-            connection.send(msg);
+            connection.send(json);
             $(this).val('');
             // disable the input field to make the user wait until server
             // sends back response
             chat.input.attr('disabled', 'disabled');
-
-            // we know that the first message sent from a user their name
-            if (thisUser.name === false) {
-                thisUser.name = msg;
-            }
         }
     });
 
@@ -138,3 +151,29 @@ $(function () {
             + ': ' + message + '</p>');
     }
 });
+
+/**
+ * Upload image and send it to server
+ */
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#uploaded_image')
+                .attr('src', e.target.result)
+                .width(150)
+                .height(200);
+            // sending to server
+            var toSend = this.result;
+            connection.send(JSON.stringify({type: 'image', data: toSend}));
+
+        };
+
+        reader.readAsDataURL(input.files[0]);
+
+        $('#send_image').removeAttr('disabled');
+    }
+}
+
+
