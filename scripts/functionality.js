@@ -1,4 +1,5 @@
-var connection = false;
+var connection = false
+const imageWidth = 300;
 $(function () {
     "use strict";
 
@@ -33,8 +34,9 @@ $(function () {
     }
 
     // open connection
-    console.log("Connecting to host: " + window.location.host);
-    connection = new WebSocket('ws://' + window.location.host);
+    const server_host_port = window.location.host;
+    console.log("Connecting to host: " + server_host_port);
+    connection = new WebSocket('ws://' + server_host_port);
 
     /**
      * Connection listeners. Receive message from server and handle errors.
@@ -88,8 +90,7 @@ $(function () {
         else if (json_message.type === 'image') {
             $('#uploaded_image')
                 .attr('src', json_message.data)
-                .width(150)
-                .height(200);
+                .width(imageWidth);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
@@ -152,28 +153,58 @@ $(function () {
     }
 });
 
+
 /**
  * Upload image and send it to server
  */
 
 function readURL(input) {
     if (input.files && input.files[0]) {
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.onload = function (e) {
             $('#uploaded_image')
                 .attr('src', e.target.result)
-                .width(150)
-                .height(200);
+                .width(imageWidth);
             // sending to server
-            var toSend = this.result;
-            connection.send(JSON.stringify({type: 'image', data: toSend}));
+            const toSend = this.result;
+
+            // --- SENDING IMAGE TO SERVER ---
+            let request = new AJAX_image(toSend, "");
+            request.init();
+            request.send();
+            // ---
 
         };
-
         reader.readAsDataURL(input.files[0]);
-
-        $('#send_image').removeAttr('disabled');
     }
 }
 
+/**
+ * Sending image to server using HTTP connection
+ */
+
+let AJAX_image = function(data, name) {
+    this.server = false;
+    this.url = window.location.protocol + "//" + window.location.host + name;
+    this.method = 'POST';
+    this.dataType = 'text/html';
+    this.async = true;
+    this.data = data;
+
+    this.init = function () {
+        this.server = new XMLHttpRequest();
+
+        //Open first, before setting the request headers.
+        this.server.open(this.method, this.url, this.async);
+        // this.server.setRequestHeader('Content-length', this.data.length);
+        console.log("XMLHttpRequest created.");
+        return true;
+    };
+
+    this.send = function () {
+        if (this.init()) {
+            this.server.send(this.data);
+        }
+    }
+};
 

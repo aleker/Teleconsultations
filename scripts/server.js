@@ -37,6 +37,29 @@ colors.sort(function (a, b) {
  */
 
 const requestHandler = (request, response) => {
+    if (request.method === 'POST') {        // for image sending
+        console.log((new Date()) + "POST Request - start.");
+        var imageBody = '';
+        request.on('data', function (data) {
+            imageBody += data;
+            console.log((new Date()) + "POST Request: Body part of image data.");
+        });
+        request.on('end', function () {
+            //console.log("Body: " + body);
+            console.log((new Date()) + "POST Request: End of image data.");
+
+            // broadcast message to all connected clients
+            const json = JSON.stringify({type: 'image', data: imageBody});
+            for (let [key, value] of clientsMap) {
+                value.fd.sendUTF(json);
+            }
+        });
+
+        response.writeHead(200, {'Content-Type': 'text/html'});
+        response.end('post received');
+        return;
+    }
+
     // Parse the request containing file name
     const pathname = url.parse(request.url).pathname;
     // based on the URL path, extract the file extension. e.g. .js, .doc, ...
