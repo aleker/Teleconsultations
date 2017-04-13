@@ -169,21 +169,24 @@ function readURL(input) {
             const toSend = this.result;
 
             // --- SENDING IMAGE TO SERVER ---
-            let request = new AJAX_image(toSend, "");
+            // TODO removing lines:
+            let request = new ImageSender(toSend, "");
             request.init();
             request.send();
-            // ---
 
         };
         reader.readAsDataURL(input.files[0]);
+        $('#sendImageButton').removeAttr('disabled');
     }
+
+
 }
 
 /**
  * Sending image to server using HTTP connection
  */
 
-let AJAX_image = function(data, name) {
+let ImageSender = function(data, name) {
     this.server = false;
     this.url = window.location.protocol + "//" + window.location.host + name;
     this.method = 'POST';
@@ -207,4 +210,21 @@ let AJAX_image = function(data, name) {
         }
     }
 };
+
+// TODO not working sending on button click
+
+$('#sendImageButton').onchange = function () {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    var img = document.getElementById('uploaded_image');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    context.drawImage(img, 0, 0 );
+    var myData = context.getImageData(0, 0, img.width, img.height);
+
+    let request = new ImageSender(myData, "");
+    request.init();
+    request.send();
+};
+
 
