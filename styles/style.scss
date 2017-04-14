@@ -5,12 +5,30 @@ $grid-columns: 12;
 $content-height: 160px;
 $chat-constant-width:400px;
 
+$image-width: 0;
+$image-height: 0;
+
+// COLORS
+$dark-blue: #2E2B2B;
+$medium-blue: #388186;
+$light-blue: #A5E9E1;
+$cream: #FDF6F6;
+$grey: #586E72;
+
 * {
   font-family: "Lucida Sans", sans-serif;
   font-size:12px;
   padding:1px;
-  margin:1px;
+  margin:0;
+  box-sizing: border-box;
+
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%; }
+
 
 p {
   line-height:18px;
@@ -23,10 +41,11 @@ p {
     .column-small-#{$i} {
       width: 100% / 12 * $i;
       border:1px solid #ff22cf;
+      max-width: 100% / 12 * $i;
     }
-    .chat {
-      width: 100%;
-    }
+    //.chat {
+    //  width: 100%;
+    //}
   }
 }
 @media (min-width: $small) and (max-width: $medium) {
@@ -35,10 +54,14 @@ p {
       width: 100% / 12 * $i;
       border:1px solid #ff22cf;
     }
-    .chat {
-      width: $chat-constant-width;
-
-    }
+    //#container{
+    //  max-width: 100% / 12 * 9;
+    //  max-height: 0.75*(100% / 12 * 9);
+    //}
+    //.chat {
+    //  width: $chat-constant-width;
+    //
+    //}
   }
 }
 @media (min-width: $medium) {
@@ -47,10 +70,30 @@ p {
       width: 100% / 12 * $i;
       border: 1px solid #ff22cf;
     }
-    .chat {
-      width: $chat-constant-width;
-    }
+    //#container{
+    //  max-width: 100% / 12 * 9;
+    //  max-height: 0.75*(100% / 12 * 9);
+    //}
+    //.chat {
+    //  width: $chat-constant-width;
+    //}
   }
+}
+
+/*
+Main boxes settings
+ */
+#sidebar{
+  float: right;
+  height:100vh;
+  position: relative;
+
+}
+#main-workspace{
+  overflow: hidden;
+  float: left;
+  margin:0;
+  height:100vh;
 }
 
 /**
@@ -59,6 +102,8 @@ p {
 
 .chat {
   // border: 1px solid #ff0e10;
+  width:100%;
+  //position: absolute;
 
   #chat-window {
     background: #ddd;
@@ -72,7 +117,7 @@ p {
     #chat-status {
       width: 25%;
       display: block;
-      float: left;
+      //float: left;
       margin-top: 15px;
     }
 
@@ -86,6 +131,29 @@ p {
   }
 }
 
+/*
+Image displaying settings
+ */
+
+#container{
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0 auto;
+  border: solid 2px #A5E9E1;
+}
+
+.box {
+  margin: 27px;
+  position: relative;
+  height:70%;
+  width: 90%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 img{
   position: absolute;
   margin: auto;
@@ -93,52 +161,35 @@ img{
   left: 0;
   right: 0;
   bottom: 0;
-  max-height: 500px;
-  max-width: 700px;
-}
-
-#container{
-  width: 700px;
-  height: 500px;
-  margin: 5px;
-  border: 1px solid blue;
-  position: relative;
-}
-
-.box {
-  border: 2px solid black;
-  width: 710px;
-  height: 510px;
-  background-color: green;
-  margin: 27px;
-  position: relative;
+  max-height:100%;
+  max-width:100%;
 }
 
 .ui-rotatable-handle {
-  background: url("https://cdn.jsdelivr.net/jquery.ui.rotatable/1.0.1/rotate.png");
+  background: url("https://img.clipartfest.com/4b71bb1dc7ced468fd71b6dd3bee32c6_arrow-redo-rotate-icon-rotate-clipart_256-256.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  height: 25px;
-  width: 25px;
+  height: 15px;
+  width: 15px;
   position: absolute;
 }
 
 .ui-rotatable-handle-sw {
-  bottom: -27px;
-  left: -27px;
+  bottom: -20px;
+  left: -20px;
 }
 
 .ui-rotatable-handle-nw {
-  top: -27px;
-  left: -27px;
+  top: -20px;
+  left: -20px;
 }
 
 .ui-rotatable-handle-se {
-  bottom: -27px;
-  right: -27px;
+  bottom: -20px;
+  right: -20px;
 }
 
 .ui-rotatable-handle-ne {
-  top: -27px;
-  right: -27px;
+  top: -20px;
+  right: -20px;
 }

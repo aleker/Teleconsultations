@@ -1,5 +1,13 @@
 $(function() {
 
+    function createImageOnCanvas(imageId) {
+        canvas.style.display = "block";
+        document.getElementById("images").style.overflowY = "hidden";
+        var img = new Image(300, 300);
+        img.src = document.getElementById(imageId).src;
+        context.drawImage(img, (0), (0)); //onload....
+    }
+
     wheelzoom(document.querySelector('img.zoom'));
 
     const params={
@@ -27,12 +35,12 @@ $(function() {
     // Assign Rotatable
     $('.box').resizable().rotatable(params);
     // Assign coordinate classes to handles
-    $('.box div.ui-rotatable-handle').addClass("ui-rotatable-handle-sw");
+    $('.box div.ui-rotatable-handle').addClass("ui-rotatable-handle-ne");
     nw.addClass("ui-rotatable-handle-nw");
     ne.addClass("ui-rotatable-handle-ne");
     se.addClass("ui-rotatable-handle-se");
     // Assign handles to box
-    $(".box").append(nw, ne, se);
+    // $(".box").append(nw, ne, se);
     // Assigning bindings for rotation event
     $(".box div[class*='ui-rotatable-handle-']").bind("mousedown", function(e) {
         $('.box').rotatable("instance").startRotate(e);
