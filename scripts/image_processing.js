@@ -1,13 +1,5 @@
 $(function() {
 
-    function createImageOnCanvas(imageId) {
-        canvas.style.display = "block";
-        document.getElementById("images").style.overflowY = "hidden";
-        var img = new Image(300, 300);
-        img.src = document.getElementById(imageId).src;
-        context.drawImage(img, (0), (0)); //onload....
-    }
-
     wheelzoom(document.querySelector('img.zoom'));
 
     const params={
@@ -20,18 +12,12 @@ $(function() {
 
 
     // Prepare extra handles
-    var nw = $("<div>", {
+    let nw = $("<div>", {
         class: "ui-rotatable-handle"
     });
-    var ne = nw.clone();
-    var se = nw.clone();
-    /*
-     You can also combine this plugin with the jQuery UI built-in resizable() and draggable(), although the latter works best when applied to a container with the rotatable inside it. See the Demo page for some examples.
-     */
-    // Assign Draggable
-    // $('.box-wrapper').draggable({
-    //     cancel: ".ui-rotatable-handle"
-    // });
+    let ne = nw.clone();
+    let se = nw.clone();
+
     // Assign Rotatable
     $('.box').resizable().rotatable(params);
     // Assign coordinate classes to handles
