@@ -5,10 +5,12 @@
     <title>WebSockets - Simple chat</title>
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-    <!--<link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />-->
-
-    <!--<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css"></script>
+    <script src="libraries/jquery.ui.rotatable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="libraries/wheelzoom.js"></script>
     <script src="./scripts/functionality.js"></script>
+    <script src="./scripts/image_processing.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/style.css">
 
 </head>
@@ -21,15 +23,15 @@
     </div>
     <div>
         <input id="readFileButton" type='file' onchange="readURL(this)" />
-        <div id="container">
-            <img id="uploaded_image" src="#" alt="your image" onclick="onZoom();" oncontextmenu="onRightClick(); return false;"/>
+        <div class="box-wrapper">
+            <div class="box">
+                <div id="container">
+                    <img class='zoom' id="uploaded_image" src="#" alt="your image"/>
+                </div>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-<div id="drag">draggable</div>
 
 </body>
 </html>

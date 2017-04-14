@@ -4,9 +4,7 @@ const imageWidth = 300;
 $(function () {
     "use strict";
 
-    $('#container').draggable();
-    /**    // $( "#uploaded_image" ).draggable({
-    //     containment: "#container", scroll: true});
+    /**
      * Global variables
      */
 
@@ -92,8 +90,7 @@ $(function () {
         }
         else if (json_message.type === 'image') {
             $('#uploaded_image')
-                .attr('src', json_message.data)
-                .width(imageWidth);
+                .attr('src', json_message.data);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
@@ -166,8 +163,7 @@ function readURL(input) {
         let reader = new FileReader();
         reader.onload = function (e) {
             $('#uploaded_image')
-                .attr('src', e.target.result)
-                .width(imageWidth);
+                .attr('src', e.target.result);
             // sending to server
             const toSend = this.result;
 
@@ -186,43 +182,7 @@ function readURL(input) {
  * Sending image to server using HTTP connection
  */
 
-var imageOffset_x = 0;
-var imageOffset_y = 0;
 
-function onZoom()
-{
-    var mouseInFrame_x = event.x;
-    var mouseinFrame_y = event.y;
-    var mouseInImage_x = imageOffset_x + mouseInFrame_x;
-    var mouseInImage_y = imageOffset_y + mouseinFrame_y;
-    imageOffset_x += mouseInImage_x * 0.16;
-    imageOffset_y += mouseInImage_y * 0.16;
-
-    var image = $('#uploaded_image');
-    var imageWidth = image.width();
-    var imageHeight = image.height();
-
-    image.css({
-        height: imageHeight * 1.2,
-        width: imageWidth * 1.2,
-        left: -imageOffset_x,
-        top: -imageOffset_y
-    });
-}
-
-function onRightClick() {
-    imageOffset_x = 0;
-    imageOffset_y = 0;
-
-    $('#container img').css({
-        height: 600,
-        width: 400,
-        left: 0,
-        top: 0
-    });
-
-    return false;
-}
 
 let AJAX_image = function(data, name) {
     this.server = false;
