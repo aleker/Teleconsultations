@@ -37,72 +37,79 @@ colors.sort(function (a, b) {
  */
 
 const requestHandler = (request, response) => {
-    if (request.method === 'POST') {        // for image sending
-        console.log((new Date()) + "POST Request - start.");
-        var imageBody = '';
-        request.on('data', function (data) {
-            imageBody += data;
-            console.log((new Date()) + "POST Request: Body part of image data.");
-        });
-        request.on('end', function () {
-            //console.log("Body: " + body);
-            console.log((new Date()) + "POST Request: End of image data.");
+    switch (request.method) {
+        case "POST":
+            console.log((new Date()) + "POST Request - start.");
+            var imageBody = '';
+            request.on('data', function (data) {
+                imageBody += data;
+                console.log((new Date()) + "POST Request: Body part of image data.");
+            });
+            request.on('end', function () {
+                //console.log("Body: " + body);
+                console.log((new Date()) + "POST Request: End of image data.");
 
-            // broadcast message to all connected clients
-            const json = JSON.stringify({type: 'image', data: imageBody});
-            for (let [key, value] of clientsMap) {
-                value.fd.sendUTF(json);
-            }
-        });
+                // broadcast message to all connected clients
+                const json = JSON.stringify({type: 'image', data: imageBody});
+                for (let [key, value] of clientsMap) {
+                    value.fd.sendUTF(json);
+                }
+            });
 
-        response.writeHead(200, {'Content-Type': 'text/html'});
-        response.end('post received');
-        return;
+            response.writeHead(200, {'Content-Type': 'text/html'});
+            response.end('post received');
+            break;
+
+        case "GET":
+            // Parse the request containing file name
+            const pathname = url.parse(request.url).pathname;
+            // based on the URL path, extract the file extension. e.g. .js, .doc, ...
+            const fileExtension = path.parse(pathname).ext;
+            // maps file extension to MIME typere
+            const map = {
+                '.ico': 'image/x-icon',
+                '.html': 'text/html',
+                '.js': 'text/javascript',
+                '.json': 'application/json',
+                '.css': 'text/css',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.wav': 'audio/wav',
+                '.mp3': 'audio/mpeg',
+                '.svg': 'image/svg+xml',
+                '.pdf': 'application/pdf',
+                '.doc': 'application/msword'
+            };
+            fs.exists("../" + pathname, function (exist) {
+                // if the file is not found, return 404
+                if (!exist) {
+                    response.statusCode = 404;
+                    response.end(`File ${pathname} not found!`);
+                    return;
+                }
+                // if a directory search for index file is matching the extension
+                // Read the requested file content from file system
+                fs.readFile("../" + pathname.substr(1), function (err, data) {
+                    if (err) {
+                        // HTTP Status: 500 : INTERNAL SERVER ERROR
+                        response.statusCode = 500;
+                        response.end(`Error getting the file: ${err}.`);
+                    } else {
+                        //Page found -> HTTP Status: 200 : OK
+                        response.writeHead(200, {'Content-Type': map[fileExtension] || 'text/plain'});
+                        // Write the content of the file to response body
+                        response.write(data.toString(), 'utf-8');
+                        // Send the response body
+                        response.end();
+                    }
+                });
+            });
+            break;
+
+        default:
+            break;
     }
 
-    // Parse the request containing file name
-    const pathname = url.parse(request.url).pathname;
-    // based on the URL path, extract the file extension. e.g. .js, .doc, ...
-    const fileExtension = path.parse(pathname).ext;
-    // maps file extension to MIME typere
-    const map = {
-        '.ico': 'image/x-icon',
-        '.html': 'text/html',
-        '.js': 'text/javascript',
-        '.json': 'application/json',
-        '.css': 'text/css',
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.wav': 'audio/wav',
-        '.mp3': 'audio/mpeg',
-        '.svg': 'image/svg+xml',
-        '.pdf': 'application/pdf',
-        '.doc': 'application/msword'
-    };
-    fs.exists("../" + pathname, function (exist) {
-        // if the file is not found, return 404
-        if (!exist) {
-            response.statusCode = 404;
-            response.end(`File ${pathname} not found!`);
-            return;
-        }
-        // if a directory search for index file is matching the extension
-        // Read the requested file content from file system
-        fs.readFile("../" + pathname.substr(1), function (err, data) {
-            if (err) {
-                // HTTP Status: 500 : INTERNAL SERVER ERROR
-                response.statusCode = 500;
-                response.end(`Error getting the file: ${err}.`);
-            } else {
-                //Page found -> HTTP Status: 200 : OK
-                response.writeHead(200, {'Content-Type': map[fileExtension] || 'text/plain'});
-                // Write the content of the file to response body
-                response.write(data.toString(), 'utf-8');
-                // Send the response body
-                response.end();
-            }
-        });
-    });
 };
 
 /**

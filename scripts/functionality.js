@@ -163,28 +163,30 @@ function readURL(input) {
         let reader = new FileReader();
         reader.onload = function (e) {
             $('#uploaded_image')
-                .attr('src', e.target.result);
-            // sending to server
-            const toSend = this.result;
-
-            // --- SENDING IMAGE TO SERVER ---
-            let request = new AJAX_image(toSend, "");
-            request.init();
-            request.send();
-            // ---
-
+                .attr('src', e.target.result)
+                .width(imageWidth);
         };
         reader.readAsDataURL(input.files[0]);
+        $('#sendImageButton').removeAttr('disabled');
     }
+}
+
+/**
+ * Send image data to server
+ */
+
+function sendImageToServer(imageId) {
+    const image_data = document.getElementById(imageId).src;
+    let request = new ImageSender(image_data, "");
+    request.init();
+    request.send();
 }
 
 /**
  * Sending image to server using HTTP connection
  */
 
-
-
-let AJAX_image = function(data, name) {
+let ImageSender = function(data, name) {
     this.server = false;
     this.url = window.location.protocol + "//" + window.location.host + name;
     this.method = 'POST';
@@ -208,6 +210,4 @@ let AJAX_image = function(data, name) {
         }
     }
 };
-
-
 
