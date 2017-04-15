@@ -1,4 +1,4 @@
-var connection = false;
+let connection = false;
 const imageWidth = 300;
 
 $(function () {
@@ -89,8 +89,10 @@ $(function () {
                 json_message.data.color, new Date(json_message.data.time));
         }
         else if (json_message.type === 'image') {
+            console.log("I RECEIVED AN IMAGE!!!!");
             $('#uploaded_image')
-                .attr('src', json_message.data);
+                .attr('src', json_message.data)
+                .width(imageWidth);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
