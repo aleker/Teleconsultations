@@ -167,6 +167,13 @@ function readURL(input) {
             $('#uploaded_image')
                 .attr('src', e.target.result)
                 .width(imageWidth);
+
+            // --- SENDING IMAGE TO SERVER ---
+            // TODO delete
+            // const toSend = this.result;
+            // let request = new ImageSender(toSend, "");
+            // request.init();
+            // request.send();
         };
         reader.readAsDataURL(input.files[0]);
         $('#sendImageButton').removeAttr('disabled');
