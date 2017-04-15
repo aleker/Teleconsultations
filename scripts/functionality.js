@@ -152,25 +152,11 @@ $(function () {
             + ': ' + message + '</p>');
     }
 
-    document.getElementById('sendImageButton').onclick = function () {
-        let canvas = document.createElement('canvas');
-        let context = canvas.getContext('2d');
-        const img = document.getElementById('uploaded_image');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0 );
-        var myData = context.getImageData(0, 0, img.width, img.height);
-
-        let request = new ImageSender(myData, "");
-        request.init();
-        request.send();
-    };
-
 });
 
 
 /**
- * Upload image and send it to server
+ * Upload image
  */
 
 function readURL(input) {
@@ -180,20 +166,21 @@ function readURL(input) {
             $('#uploaded_image')
                 .attr('src', e.target.result)
                 .width(imageWidth);
-            // sending to server
-            const toSend = this.result;
-
-            // --- SENDING IMAGE TO SERVER ---
-            // TODO removing lines:
-            // let request = new ImageSender(toSend, "");
-            // request.init();
-            // request.send();
-
         };
         reader.readAsDataURL(input.files[0]);
         $('#sendImageButton').removeAttr('disabled');
     }
+}
 
+/**
+ * Send image data to server
+ */
+
+function sendImageToServer(imageId) {
+    const image_data = document.getElementById(imageId).src;
+    let request = new ImageSender(image_data, "");
+    request.init();
+    request.send();
 }
 
 /**

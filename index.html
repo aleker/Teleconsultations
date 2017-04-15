@@ -19,7 +19,7 @@
     <div>
         <input id="readFileButton" type='file' value="Add Image File" onchange="readURL(this)"  />
         <img id="uploaded_image" src="#" alt="your image" />
-        <input type="button" value="Send" id="sendImageButton" disabled/>
+        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer('uploaded_image')" disabled/>
     </div>
 </div>
 
