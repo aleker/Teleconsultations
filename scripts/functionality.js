@@ -1,3 +1,5 @@
+var connection = false
+const imageWidth = 300;
 $(function () {
     "use strict";
 
@@ -32,8 +34,9 @@ $(function () {
     }
 
     // open connection
-    console.log("Connecting to host: " + window.location.host);
-    const connection = new WebSocket('ws://' + window.location.host);
+    const server_host_port = window.location.host;
+    console.log("Connecting to host: " + server_host_port);
+    connection = new WebSocket('ws://' + server_host_port);
 
     /**
      * Connection listeners. Receive message from server and handle errors.
@@ -79,10 +82,15 @@ $(function () {
                     json_message.data[i].color, new Date(json_message.data[i].time));
             }
         }
-        else if (json_message.type === 'message') { // it's a single message
+        else if (json_message.type === 'chatMessageOnBroadcast') { // it's a single message
             chat.input.removeAttr('disabled').focus(); // let the user write another message
             addMessage(json_message.data.author, json_message.data.text,
                 json_message.data.color, new Date(json_message.data.time));
+        }
+        else if (json_message.type === 'image') {
+            $('#uploaded_image')
+                .attr('src', json_message.data)
+                .width(imageWidth);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
@@ -99,17 +107,23 @@ $(function () {
             if (!msg) {
                 return;
             }
+
+            let jsonType = false;
+            // we know that the first message sent from a user their name
+            if (thisUser.name === false) {
+                thisUser.name = msg;
+                jsonType = 'clientName';
+            }
+            else jsonType = 'chatMessage';
+
+            const json = JSON.stringify({type: jsonType, data: msg});
+
             // send the message as an ordinary text
-            connection.send(msg);
+            connection.send(json);
             $(this).val('');
             // disable the input field to make the user wait until server
             // sends back response
             chat.input.attr('disabled', 'disabled');
-
-            // we know that the first message sent from a user their name
-            if (thisUser.name === false) {
-                thisUser.name = msg;
-            }
         }
     });
 
@@ -137,4 +151,68 @@ $(function () {
             + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
             + ': ' + message + '</p>');
     }
+
 });
+
+
+/**
+ * Upload image
+ */
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            $('#uploaded_image')
+                .attr('src', e.target.result)
+                .width(imageWidth);
+        };
+        reader.readAsDataURL(input.files[0]);
+        $('#sendImageButton').removeAttr('disabled');
+    }
+}
+
+/**
+ * Send image data to server
+ */
+
+function sendImageToServer(imageId) {
+    const image_data = document.getElementById(imageId).src;
+    let request = new ImageSender(image_data, "");
+    request.init();
+    request.send();
+}
+
+/**
+ * Sending image to server using HTTP connection
+ */
+
+let ImageSender = function(data, name) {
+    this.server = false;
+    this.url = window.location.protocol + "//" + window.location.host + name;
+    this.method = 'POST';
+    this.dataType = 'text/html';
+    this.async = true;
+    this.data = data;
+
+    this.init = function () {
+        this.server = new XMLHttpRequest();
+
+        //Open first, before setting the request headers.
+        this.server.open(this.method, this.url, this.async);
+        // this.server.setRequestHeader('Content-length', this.data.length);
+        console.log("XMLHttpRequest created.");
+        return true;
+    };
+
+    this.send = function () {
+        if (this.init()) {
+            this.server.send(this.data);
+        }
+    }
+};
+
+
+
+
+

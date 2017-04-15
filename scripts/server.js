@@ -21,63 +21,95 @@ const hostname = process.argv[2] || '0.0.0.0';
 const port = process.argv[3] || 8080;
 
 // latest 100 messages
-let history = [ ];
+let history = [];
 // list of currently connected clients (users)
 let indexOfClient = 0;
 let clientsMap = new Map();
 // Array with some colors
-const colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
+const colors = ['red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange'];
 // ... in random order
-colors.sort(function(a,b) { return Math.random() > 0.5; } );
+colors.sort(function (a, b) {
+    return Math.random() > 0.5;
+});
 
 /**
  * handles HTTP request (when client connects to the server for the first time via browser)
  */
 
 const requestHandler = (request, response) => {
-    // Parse the request containing file name
-    const pathname = url.parse(request.url).pathname;
-    // based on the URL path, extract the file extension. e.g. .js, .doc, ...
-    const fileExtension = path.parse(pathname).ext;
-    // maps file extension to MIME typere
-    const map = {
-        '.ico': 'image/x-icon',
-        '.html': 'text/html',
-        '.js': 'text/javascript',
-        '.json': 'application/json',
-        '.css': 'text/css',
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.wav': 'audio/wav',
-        '.mp3': 'audio/mpeg',
-        '.svg': 'image/svg+xml',
-        '.pdf': 'application/pdf',
-        '.doc': 'application/msword'
-    };
-    fs.exists("../" + pathname, function (exist) {
-        // if the file is not found, return 404
-        if (!exist) {
-            response.statusCode = 404;
-            response.end(`File ${pathname} not found!`);
-            return;
-        }
-        // if a directory search for index file is matching the extension
-        // Read the requested file content from file system
-        fs.readFile("../" + pathname.substr(1), function (err, data) {
-            if (err) {
-                // HTTP Status: 500 : INTERNAL SERVER ERROR
-                response.statusCode = 500;
-                response.end(`Error getting the file: ${err}.`);
-            } else {
-                //Page found -> HTTP Status: 200 : OK
-                response.writeHead(200, {'Content-Type': map[fileExtension] || 'text/plain'});
-                // Write the content of the file to response body
-                response.write(data.toString(), 'utf-8');
-                // Send the response body
-                response.end();
-            }
-        });
-    });
+    switch (request.method) {
+        case "POST":
+            console.log((new Date()) + "POST Request - start.");
+            var imageBody = '';
+            request.on('data', function (data) {
+                imageBody += data;
+                console.log((new Date()) + "POST Request: Body part of image data.");
+            });
+            request.on('end', function () {
+                //console.log("Body: " + body);
+                console.log((new Date()) + "POST Request: End of image data.");
+
+                // broadcast message to all connected clients
+                const json = JSON.stringify({type: 'image', data: imageBody});
+                for (let [key, value] of clientsMap) {
+                    value.fd.sendUTF(json);
+                }
+            });
+
+            response.writeHead(200, {'Content-Type': 'text/html'});
+            response.end('post received');
+            break;
+
+        case "GET":
+            // Parse the request containing file name
+            const pathname = url.parse(request.url).pathname;
+            // based on the URL path, extract the file extension. e.g. .js, .doc, ...
+            const fileExtension = path.parse(pathname).ext;
+            // maps file extension to MIME typere
+            const map = {
+                '.ico': 'image/x-icon',
+                '.html': 'text/html',
+                '.js': 'text/javascript',
+                '.json': 'application/json',
+                '.css': 'text/css',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.wav': 'audio/wav',
+                '.mp3': 'audio/mpeg',
+                '.svg': 'image/svg+xml',
+                '.pdf': 'application/pdf',
+                '.doc': 'application/msword'
+            };
+            fs.exists("../" + pathname, function (exist) {
+                // if the file is not found, return 404
+                if (!exist) {
+                    response.statusCode = 404;
+                    response.end(`File ${pathname} not found!`);
+                    return;
+                }
+                // if a directory search for index file is matching the extension
+                // Read the requested file content from file system
+                fs.readFile("../" + pathname.substr(1), function (err, data) {
+                    if (err) {
+                        // HTTP Status: 500 : INTERNAL SERVER ERROR
+                        response.statusCode = 500;
+                        response.end(`Error getting the file: ${err}.`);
+                    } else {
+                        //Page found -> HTTP Status: 200 : OK
+                        response.writeHead(200, {'Content-Type': map[fileExtension] || 'text/plain'});
+                        // Write the content of the file to response body
+                        response.write(data.toString(), 'utf-8');
+                        // Send the response body
+                        response.end();
+                    }
+                });
+            });
+            break;
+
+        default:
+            break;
+    }
+
 };
 
 /**
@@ -85,7 +117,7 @@ const requestHandler = (request, response) => {
  */
 
 const server = http.createServer(requestHandler);
-server.listen(port, hostname, function() {
+server.listen(port, hostname, function () {
     console.log((new Date()) + " Server is listening on port " + port);
 });
 
@@ -104,7 +136,7 @@ const wsServer = new webSocketServer({
  * tries to connect to the WebSocket server
  */
 
-wsServer.on('request', function(request) {
+wsServer.on('request', function (request) {
     // new request came
     console.log((new Date()) + ' Connection from origin ' + request.origin + '.');
     // accept connection - you should check 'request.origin' to make sure that
@@ -125,53 +157,74 @@ wsServer.on('request', function(request) {
 
     // send back chat history
     if (history.length > 0) {
-        connection.sendUTF(JSON.stringify( { type: 'history', data: history} ));
+        connection.sendUTF(JSON.stringify({type: 'history', data: history}));
     }
 
     // receive message from user
-    connection.on('message', function(message) {
+    connection.on('message', function (message) {
         if (message.type === 'utf8') { // accept only utf8 messages
-            // first message sent by user should be name
-            if (userName === false) {
-                // remember user name
-                userName = message.utf8Data;
-                // get random color and send it back to the user
-                userColor = colors.shift();
-                connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
-                console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
-            }
-            else { // log and broadcast the message
-                console.log((new Date()) + ' Received Message from ' + userName  + '(' + userId + ') : ' + message.utf8Data);
-
-                // we want to keep history of all sent messages
-                const obj = {
-                    time: (new Date()).getTime(),
-                    text: message.utf8Data,
-                    author: userName,
-                    color: userColor
-                };
-                history.push(obj);
-                // slice history so the length won't cross 100 messages
-                history = history.slice(-100);
-
-                // broadcast message to all connected clients
-                const json = JSON.stringify({ type:'message', data: obj });
-                for (let [key, value] of clientsMap) {
-                    value.fd.sendUTF(json);
+            let json_message = false;
+            try {
+                json_message = JSON.parse(message.utf8Data);
+                if (json_message.type === 'image') {
+                    console.log("IMAGE received.");
+                    // broadcast message to all connected clients
+                    const json = JSON.stringify({type: 'image', data: json_message.data});
+                    for (let [key, value] of clientsMap) {
+                        value.fd.sendUTF(json);
+                    }
                 }
+                // first message sent by user should be name
+                else if (json_message.type === 'clientName') {
+                    console.log("NAME received.");
+                    // remember user name
+                    userName = json_message.data;
+                    // get random color and send it back to the user
+                    userColor = colors.shift();
+                    connection.sendUTF(JSON.stringify({type: 'color', data: userColor}));
+                    console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
+                }
+                else if (json_message.type === 'chatMessage'){ // log and broadcast the message
+                    console.log("CHAT-MESSAGE received.");
+                    console.log((new Date()) + ' Received Message from ' + userName + '(' + userId + ') : ' + json_message.data);
+
+                    // we want to keep history of all sent messages
+                    const obj = {
+                        time: (new Date()).getTime(),
+                        text: json_message.data,
+                        author: userName,
+                        color: userColor
+                    };
+                    history.push(obj);
+                    // slice history so the length won't cross 100 messages
+                    history = history.slice(-100);
+
+                    // broadcast message to all connected clients
+                    const json = JSON.stringify({type: 'chatMessageOnBroadcast', data: obj});
+                    for (let [key, value] of clientsMap) {
+                        value.fd.sendUTF(json);
+                    }
+                }
+                else {
+                    console.log('Hmm..., I\'ve never seen JSON like this: ', json_message.data);
+                }
+            } catch (e) {
+                console.log('This doesn\'t look like a valid JSON: ', json_message.data);
             }
         }
+        else
+            console.log('Not UTF8 message type.');
     });
 
     // user disconnected
-    connection.on('close', function(connection) {
+    connection.on('close', function (connection) {
         // close user connection
         if (clientsMap.get(userId) !== undefined) {
             // remove user from the list of connected clients
             clientsMap.delete(userId);
             // push back user's color to be reused by another user
             colors.push(userColor);
-            console.log((new Date()) + " Peer with id " + userId + " (" + userName +  ") disconnected. " + clientsMap.size + " left.");
+            console.log((new Date()) + " Peer with id " + userId + " (" + userName + ") disconnected. " + clientsMap.size + " left.");
         }
     });
 

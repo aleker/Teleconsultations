@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>WebSockets - Simple chat</title>
+    <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="./scripts/functionality.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -13,6 +15,11 @@
     <div>
         <span id="chat-status">Connecting...</span>
         <input type="text" id="chat-input" disabled="disabled" autofocus/>
+    </div>
+    <div>
+        <input id="readFileButton" type='file' value="Add Image File" onchange="readURL(this)"  />
+        <img id="uploaded_image" src="#" alt="your image" />
+        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer('uploaded_image')" disabled/>
     </div>
 </div>
 
