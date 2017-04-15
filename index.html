@@ -16,6 +16,13 @@
 </head>
 <body>
 
+    <div id="main-workspace" class="column-big-9 column-medium-9 column-small-12">
+            <div class="box">
+                <div id="container">
+                    <img class='zoom' id="uploaded_image" src="#" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>
+                </div>
+            </div>
+    </div>
     <div id="sidebar" class="column-big-3 column-medium-3 column-small-12">
         <div class="chat">
             <div id="chat-window"></div>
@@ -25,14 +32,8 @@
             </div>
         </div>
         <input id="readFileButton" type='file' onchange="readURL(this)" />
-    </div>
-
-    <div id="main-workspace" class="column-big-9 column-medium-9 column-small-12">
-            <div class="box">
-                <div id="container">
-                    <img class='zoom' id="uploaded_image" src="#" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>
-                </div>
-            </div>
+        <input type="submit" value="python" onclick="sendToPython()" />
+        <div id="python-response">Python response</div>
     </div>
 
 

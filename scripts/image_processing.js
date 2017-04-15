@@ -33,3 +33,12 @@ $(function() {
     });
 });
 
+function sendToPython() {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:9999",
+        success: function(response) {
+            document.getElementById("python-response").innerHTML = response;
+        }
+    });
+}
