@@ -195,3 +195,16 @@ img{
   top: -20px;
   right: -20px;
 }
+
+
+.marker{
+  border: 1px solid black;
+  height: 20px;
+  width: 100px;
+  //z-index: 99;
+  position:absolute;
+}
+
+.marker:hover{
+  cursor: pointer;
+}

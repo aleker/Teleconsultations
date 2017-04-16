@@ -1,4 +1,3 @@
-var connection = false;
 const imageWidth = 300;
 
 $(function () {
@@ -92,6 +91,9 @@ $(function () {
             $('#uploaded_image')
                 .attr('src', json_message.data);
         }
+        else if (json_message.type === 'received_markers'){
+            addMarkers(json_message);
+        }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
         }
@@ -126,6 +128,7 @@ $(function () {
             chat.input.attr('disabled', 'disabled');
         }
     });
+
 
     /**
      * This method is optional. If the server wasn't able to respond to the
@@ -178,10 +181,10 @@ function readURL(input) {
     }
 }
 
+
 /**
  * Sending image to server using HTTP connection
  */
-
 
 
 let AJAX_image = function(data, name) {

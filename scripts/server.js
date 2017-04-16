@@ -39,7 +39,7 @@ colors.sort(function (a, b) {
 const requestHandler = (request, response) => {
     if (request.method === 'POST') {        // for image sending
         console.log((new Date()) + "POST Request - start.");
-        var imageBody = '';
+        let imageBody = '';
         request.on('data', function (data) {
             imageBody += data;
             console.log((new Date()) + "POST Request: Body part of image data.");
@@ -196,6 +196,17 @@ wsServer.on('request', function (request) {
                     const json = JSON.stringify({type: 'chatMessageOnBroadcast', data: obj});
                     for (let [key, value] of clientsMap) {
                         value.fd.sendUTF(json);
+                    }
+                }
+                else if(json_message.type === 'markers'){
+                    console.log('markers received! from ' + userName + ', color ' + userColor);
+                    console.log(json_message.data);
+                    // broadcast message to all connected clients
+                    const json = JSON.stringify({type: 'received_markers', data: json_message.data, color: userColor, user: userName});
+                    for (let [key, value] of clientsMap) {
+                        console.log(key, value);
+                        if(key != userId)
+                            value.fd.sendUTF(json);
                     }
                 }
                 else {
