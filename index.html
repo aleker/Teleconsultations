@@ -5,7 +5,6 @@
     <title>WebSockets - Simple chat</title>
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css"></script>-->
     <script src="libraries/jquery.ui.rotatable.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="libraries/wheelzoom.js"></script>
@@ -33,9 +32,12 @@
             </div>
         </div>
         <input id="readFileButton" type='file' onchange="readURL(this)" />
-        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer('uploaded_image')" disabled/>
+        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer('uploaded_image_small')" disabled/>
         <input type="submit" value="python" onclick="sendToPython()" />
         <div id="python-response">Python response</div>
+        <div>
+            <img id="uploaded_image_small" src="#" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>
+        </div>
     </div>
 
 

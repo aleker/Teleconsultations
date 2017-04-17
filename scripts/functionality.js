@@ -91,6 +91,8 @@ $(function () {
         else if (json_message.type === 'image') {
             console.log("I RECEIVED AN IMAGE!!!!");
             $('#uploaded_image')
+                .attr('src', json_message.data);
+            $('#uploaded_image_small')
                 .attr('src', json_message.data)
                 .width(imageWidth);
         }
@@ -165,15 +167,11 @@ function readURL(input) {
         let reader = new FileReader();
         reader.onload = function (e) {
             $('#uploaded_image')
+                .attr('src', e.target.result);
+            $('#uploaded_image_small')
                 .attr('src', e.target.result)
                 .width(imageWidth);
 
-            // --- SENDING IMAGE TO SERVER ---
-            // TODO delete
-            // const toSend = this.result;
-            // let request = new ImageSender(toSend, "");
-            // request.init();
-            // request.send();
         };
         reader.readAsDataURL(input.files[0]);
         $('#sendImageButton').removeAttr('disabled');
