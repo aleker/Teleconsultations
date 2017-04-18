@@ -32,12 +32,14 @@
             </div>
         </div>
         <input id="readFileButton" type='file' onchange="readURL(this)" />
-        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer('uploaded_image_small')" disabled/>
+        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
         <input type="submit" value="python" onclick="sendToPython()" />
         <div id="python-response">Python response</div>
-        <div>
-            <img id="uploaded_image_small" src="#" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>
+
+        <div id="thumbnail_container" class="scroll">
         </div>
+
+
     </div>
 
 

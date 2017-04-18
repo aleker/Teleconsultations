@@ -1,5 +1,9 @@
 let connection = false;
 const imageWidth = 300;
+let thumbnail = new function() {
+    this.imageCounter = 0;
+    this.currentlyChosen = false;
+};
 
 $(function () {
     "use strict";
@@ -16,7 +20,8 @@ $(function () {
 
     let thisUser = {
         name : false,       // name sent to the server
-        color : false       // color assigned by the server
+        color : false,       // color assigned by the server
+        id : false
     };
 
     /**
@@ -70,8 +75,9 @@ $(function () {
 
         // NOTE: if you're not sure about the JSON structure
         // check the server source code above
-        if (json_message.type === 'color') { // first response from the server with user's color
+        if (json_message.type === 'color_id') { // first response from the server with user's color
             thisUser.color = json_message.data;
+            thisUser.id = json_message.id;
             chat.status.text(thisUser.name + ': ').css('color', thisUser.color);
             chat.input.removeAttr('disabled').focus();
             // from now user can start sending messages
@@ -90,11 +96,7 @@ $(function () {
         }
         else if (json_message.type === 'image') {
             console.log("I RECEIVED AN IMAGE!!!!");
-            $('#uploaded_image')
-                .attr('src', json_message.data);
-            $('#uploaded_image_small')
-                .attr('src', json_message.data)
-                .width(imageWidth);
+            createImageContainer(json_message.data);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
@@ -166,27 +168,62 @@ function readURL(input) {
     if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.onload = function (e) {
-            $('#uploaded_image')
-                .attr('src', e.target.result);
-            $('#uploaded_image_small')
-                .attr('src', e.target.result)
-                .width(imageWidth);
-
+            createImageContainer(e.target.result);
         };
         reader.readAsDataURL(input.files[0]);
-        $('#sendImageButton').removeAttr('disabled');
     }
 }
+
+/**
+ * Create new 'div' and 'img' for uploaded file
+ */
+function createImageContainer(imgData) {
+    const newThumbnail = document.createElement("div");
+    newThumbnail.setAttribute("class","thumbnail");
+
+    const newImage = document.createElement("img");
+    newImage.setAttribute("src", imgData);
+    newImage.setAttribute("class", "hover-shadow cursor");
+    const id_name = "thumbnail_img_" + (thumbnail.imageCounter++).toString();
+    newImage.setAttribute("id", id_name);
+    newImage.setAttribute("onclick", 'changeChosenImageByClick(this)');
+
+    const newRemoveImageButton = document.createElement("button");
+    newRemoveImageButton.setAttribute("class", "remove_thumbnail_button");
+    newRemoveImageButton.setAttribute("onclick", 'removeImageFromList(this)');
+    newRemoveImageButton.textContent = 'Remove from list';
+    newThumbnail.appendChild(newRemoveImageButton);
+
+    newThumbnail.appendChild(newImage);
+    document.getElementById("thumbnail_container").appendChild(newThumbnail);
+
+
+    if (thumbnail.currentlyChosen === false) {
+        currentlyChosenImageIdHandler(id_name);
+        $('#uploaded_image').attr('src', imgData);
+    }
+}
+
+function currentlyChosenImageIdHandler(value) {
+    thumbnail.currentlyChosen = value;
+    if (value === false) $('#sendImageButton').attr('disabled', 'disabled');
+    else $('#sendImageButton').removeAttr('disabled');
+}
+
 
 /**
  * Send image data to server
  */
 
-function sendImageToServer(imageId) {
-    const image_data = document.getElementById(imageId).src;
-    let request = new ImageSender(image_data, "");
-    request.init();
-    request.send();
+function sendImageToServer() {
+    if (thumbnail.currentlyChosen !== false) {
+        const image_data = document.getElementById(thumbnail.currentlyChosen).src;
+        // TODO nie usuwać obrazka stąd!!!
+        removeImageById(thumbnail.currentlyChosen);
+        let request = new ImageSender(image_data, "");
+        request.init();
+        request.send();
+    }
 }
 
 /**
@@ -218,3 +255,20 @@ let ImageSender = function(data, name) {
     }
 };
 
+function changeChosenImageByClick(image) {
+    currentlyChosenImageIdHandler(image.id);
+    $('#uploaded_image').attr('src', image.src);
+}
+
+function removeImageById(imageId) {
+    if (imageId === thumbnail.currentlyChosen) {
+        $('#uploaded_image').attr('src', "");
+        currentlyChosenImageIdHandler(false);
+    }
+    $(document.getElementById(imageId)).closest('div').remove();
+}
+
+function removeImageFromList(button) {
+    let imageId = $(button).closest('div').find('img').attr('id');
+    removeImageById(imageId);
+}

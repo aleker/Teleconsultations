@@ -55,7 +55,7 @@ const requestHandler = (request, response) => {
                     value.fd.sendUTF(json);
                 }
             });
-
+            // TODO zapisać obrazki w historii
             response.writeHead(200, {'Content-Type': 'text/html'});
             response.end('post received');
             break;
@@ -181,7 +181,7 @@ wsServer.on('request', function (request) {
                     userName = json_message.data;
                     // get random color and send it back to the user
                     userColor = colors.shift();
-                    connection.sendUTF(JSON.stringify({type: 'color', data: userColor}));
+                    connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId}));
                     console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
                 }
                 else if (json_message.type === 'chatMessage'){ // log and broadcast the message

@@ -27,13 +27,20 @@ $grey: #586E72;
 body {
   margin: 0;
   padding: 0;
-  height: 100%; }
+  height: 100%;
+}
 
 
 p {
   line-height:18px;
   width: 100%;
 }
+
+[class*="column-"] {
+  // floating to the left:
+  float: left;
+}
+
 
 // RESPONSIVE
 @media (max-width: $small) {
@@ -75,77 +82,138 @@ p {
   }
 }
 
+
 /*
 Main boxes settings
  */
-#sidebar{
-  float: right;
-  height:100vh;
-  position: relative;
 
-}
 #main-workspace{
   overflow: hidden;
-  float: left;
   margin:0;
   height:100vh;
+  display: inline-block;
+
+  /*
+Image displaying settings
+ */
+
+  .box {
+    margin: 27px;
+    position: relative;
+    height:70%;
+    width: 90%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    #container{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      margin: 0 auto;
+      border: solid 2px #A5E9E1;
+
+    }
+  }
+
 }
 
-/**
+#sidebar{
+  height:100vh;
+  display: inline-block;
+
+  /**
  * Chat display setting
  */
 
-.chat {
-  width:100%;
-  //position: absolute;
+  .chat {
+    width:100%;
 
-  #chat-window {
-    background: #ddd;
-    border: 1px solid #CCC;
-    border-radius: 5px;
-    overflow-y: scroll;
-    padding: 5px;
-    margin-top: 10px;
-    height: $content-height;
-
-    #chat-status {
-      width: 25%;
-      display: block;
-      margin-top: 15px;
-    }
-
-    #chat-input {
-      border: 1px solid #ccc;
-      border-radius: 2px;
-      margin-top: 10px;
+    #chat-window {
+      background: #ddd;
+      border: 1px solid #CCC;
+      border-radius: 5px;
+      overflow-y: scroll;
       padding: 5px;
-      width: 65%;
+      margin-top: 10px;
+      height: $content-height;
+
+      #chat-status {
+        width: 25%;
+        display: block;
+        margin-top: 15px;
+      }
+
+      #chat-input {
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        margin-top: 10px;
+        padding: 5px;
+      }
+    }
+  }
+
+  div.scroll {
+    width: 100%;
+    height: 300px;
+    overflow: scroll;
+    overflow-x: hidden;
+
+    .thumbnail {
+      max-height:100%;
+      max-width:100%;
+      padding: 10px;
+
+      img {
+        max-width: 100%;
+      }
     }
   }
 }
 
-/*
-Image displaying settings
- */
+.cursor {
+  cursor: pointer;
+}
 
-#container{
+img.hover-shadow {
+  transition: 0.3s;
+}
+.hover-shadow:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+
+.remove_thumbnail_button {
+  background-color: #4CAF50; /* Green */
+  border: 1px solid green;
+  color: white;
   width: 100%;
-  height: 100%;
-  position: relative;
-  margin: 0 auto;
-  border: solid 2px #A5E9E1;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px;
 }
 
-.box {
-  margin: 27px;
-  position: relative;
-  height:70%;
-  width: 90%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.remove_thumbnail_button:hover {
+  background-color: #3e8e41;
+  padding: 3px;
 }
+
+img.zoom{
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height:100%;
+    max-width:100%;
+    //z-index: -1;
+  }
+
+// TODO not used class
 .overlay-canvas {
   width:100%;
   height:100%;
@@ -155,21 +223,9 @@ Image displaying settings
   background-color: rgba(255, 0, 0, .6);
 }
 
-img{
-  position: absolute;
-  margin: auto;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  max-height:100%;
-  max-width:100%;
-  //z-index: -1;
-}
 
 .ui-rotatable-handle {
-  background: url("https://img.clipartfest.com/4b71bb1dc7ced468fd71b6dd3bee32c6_arrow-redo-rotate-icon-rotate-clipart_256-256.png");
-  background-repeat: no-repeat;
+  background: url("https://img.clipartfest.com/4b71bb1dc7ced468fd71b6dd3bee32c6_arrow-redo-rotate-icon-rotate-clipart_256-256.png") no-repeat;
   background-size: 100% 100%;
   height: 15px;
   width: 15px;
