@@ -31,7 +31,28 @@ const colors = ['red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange'];
 colors.sort(function (a, b) {
     return Math.random() > 0.5;
 });
-const pathForImages = '../images';
+const pathForSavedImages = '../images';
+
+/**
+ * removes old files(images) from directory
+ */
+
+const deleteFolderRecursive = function(path) {
+    if( fs.existsSync(path) ) {
+        fs.readdirSync(path).forEach(function(file,index){
+            const curPath = path + "/" + file;
+            if(fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+deleteFolderRecursive(pathForSavedImages);
+// if directory does not exists - create one
+if(!fs.existsSync(pathForSavedImages)) fs.mkdirSync(pathForSavedImages);
 
 /**
  * handles HTTP request (when client connects to the server for the first time via browser)
@@ -64,6 +85,7 @@ const requestHandler = (request, response) => {
 
                 switch (json_message.type) {
                     case 'imageFromClient': {
+                        // SEND IMAGE ON BROADCAST:
                         const dataToSendOnBroadcast = json_message.imageData;
                         const sender = json_message.clientsId;
                         // broadcast message to all connected clients except sender
@@ -72,10 +94,11 @@ const requestHandler = (request, response) => {
                             if (key === sender) continue;
                             value.fd.sendUTF(json);
                         }
-                        // TODO zapisać obrazki w historii
-                        //var base64Data = dataToSendOnBroadcast.replace(/^data:image\/jpeg;base64,/, "");
+                        // SAVE IMAGE ON SERVER SIDE:
+                        // TODO adding better file naming system:
+                        const imageName = 'example.jpg';
                         const base64Data = dataToSendOnBroadcast.substring(dataToSendOnBroadcast.indexOf("base64,") + 7);
-                        fs.writeFile('example.jpg', base64Data, 'base64', function (err) {
+                        fs.writeFile(pathForSavedImages + '/' + imageName, base64Data, 'base64', function (err) {
                             if (err) throw err;
                             console.log('File saved');
                         });
