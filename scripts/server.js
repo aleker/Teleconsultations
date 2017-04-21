@@ -71,13 +71,15 @@ const requestHandler = (request, response) => {
                             if (key === sender) continue;
                             value.fd.sendUTF(json);
                         }
+                        // TODO zapisać obrazki w historii
+                        let imageToSave = new Image();
+                        imageToSave.src = dataToSendOnBroadcast;
                         break;
                     }
                     default:
                         break;
                 }
             });
-            // TODO zapisać obrazki w historii
             response.writeHead(200, {'Content-Type': 'text/html'});
             response.end('post received');
             break;
@@ -203,6 +205,7 @@ wsServer.on('request', function (request) {
                     userName = json_message.data;
                     // get random color and send it back to the user
                     userColor = colors.shift();
+                    if (userColor == false) userColor = 'black';
                     connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId}));
                     console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
                 }
