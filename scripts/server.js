@@ -72,8 +72,6 @@ const requestHandler = (request, response) => {
                             value.fd.sendUTF(json);
                         }
                         // TODO zapisać obrazki w historii
-                        let imageToSave = new Image();
-                        imageToSave.src = dataToSendOnBroadcast;
                         break;
                     }
                     default:
