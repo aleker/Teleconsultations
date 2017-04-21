@@ -253,3 +253,16 @@ img.zoom{
   top: -20px;
   right: -20px;
 }
+
+// Python processing
+#python_container{
+  width: 100%;
+  border: solid 0.5px #388186;
+  height: 300px;
+  position: relative;
+
+  #python_image{
+    width: 100%;
+    height:100%;
+  }
+}

@@ -33,12 +33,24 @@ $(function() {
     });
 });
 
+
+// PYTHON
 function sendToPython() {
+    // TODO DIFFERENT IMAGE PROCESSING METHODS
+    let image_data = $('#uploaded_image').css('background-image');
+    console.log(image_data);
+    image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
+
+    json_data = {'type': 'invert', 'image': image_data};
     $.ajax({
-        type: "GET",
-        url: "http://localhost:9999",
-        success: function(response) {
-            document.getElementById("python-response").innerHTML = response;
+        type: "POST",
+        url: "http://localhost:9000",
+        data: json_data,
+        success: function (response) {
+            $('#python_image')
+                .attr('src', response.data);
         }
     });
 }
+
+

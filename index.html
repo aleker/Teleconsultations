@@ -33,10 +33,13 @@
         </div>
         <input id="readFileButton" type='file' onchange="readURL(this)" />
         <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
-        <input type="submit" value="python" onclick="sendToPython()" />
-        <div id="python-response">Python response</div>
 
         <div id="thumbnail_container" class="scroll">
+        </div>
+
+        <div id="python_container">
+            <img id="python_image" src="#"/>
+            <input type="submit" value="python" onclick="sendToPython()" />
         </div>
 
 

@@ -27,3 +27,16 @@ In order to run client application, go to web browser and type:
 ```
 
 where '0.0.0.0' is server's host and '8080' is the port server is listening on.
+
+Python server
+============
+Installing dependencies (Python 2.7)
+```
+cd python
+pip install -r requirements.txt
+```
+
+Running the server
+```
+python2 simpleserver.py
+```
