@@ -225,9 +225,10 @@ img.zoom{
   background-color: rgba(255, 0, 0, .6);
 }
 
-
+// Rotate handlers
 .ui-rotatable-handle {
-  background: url("https://img.clipartfest.com/4b71bb1dc7ced468fd71b6dd3bee32c6_arrow-redo-rotate-icon-rotate-clipart_256-256.png") no-repeat;
+  background: url("https://cdn3.iconfinder.com/data/icons/metro-design/512/rotate_right-512.png");
+  background-repeat: no-repeat;
   background-size: 100% 100%;
   height: 15px;
   width: 15px;
