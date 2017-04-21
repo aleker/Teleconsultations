@@ -31,6 +31,7 @@ const colors = ['red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange'];
 colors.sort(function (a, b) {
     return Math.random() > 0.5;
 });
+const pathForImages = '../images';
 
 /**
  * handles HTTP request (when client connects to the server for the first time via browser)
@@ -72,6 +73,12 @@ const requestHandler = (request, response) => {
                             value.fd.sendUTF(json);
                         }
                         // TODO zapisać obrazki w historii
+                        //var base64Data = dataToSendOnBroadcast.replace(/^data:image\/jpeg;base64,/, "");
+                        const base64Data = dataToSendOnBroadcast.substring(dataToSendOnBroadcast.indexOf("base64,") + 7);
+                        fs.writeFile('example.jpg', base64Data, 'base64', function (err) {
+                            if (err) throw err;
+                            console.log('File saved');
+                        });
                         break;
                     }
                     default:
