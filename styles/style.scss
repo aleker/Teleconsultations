@@ -83,96 +83,119 @@ p {
   }
 }
 
+/*
+Main Login Panel
+ */
+
+#loginPanel {
+  text-align: center;
+  margin: auto;
+  border: 3px solid green;
+  padding: 10px;
+
+  .chat-status {
+    font-size: larger;
+  }
+
+  .chat-input {
+    font-size: larger;
+  }
+}
 
 /*
 Main boxes settings
  */
 
-#main-workspace{
-  overflow: hidden;
-  margin:0;
-  height:100vh;
-  display: inline-block;
+#application {
+  display: none;
+  #main-workspace{
+    overflow: hidden;
+    margin:0;
+    height:100vh;
+    display: inline-block;
 
-  /*
-Image displaying settings
- */
+    /*
+  Image displaying settings
+   */
 
-  .box {
-    margin: 27px;
-    position: relative;
-    height:70%;
-    width: 90%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    #container{
-      width: 100%;
-      height: 100%;
+    .box {
+      margin: 27px;
       position: relative;
-      margin: 0 auto;
-      border: solid 2px #A5E9E1;
+      height:70%;
+      width: 90%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
 
+      #container{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        margin: 0 auto;
+        border: solid 2px #A5E9E1;
+
+      }
     }
+
   }
 
-}
+  #sidebar{
+    height:100vh;
+    display: inline-block;
 
-#sidebar{
-  height:100vh;
-  display: inline-block;
+    /**
+   * Chat display setting
+   */
 
-  /**
- * Chat display setting
- */
+    .chat {
+      width:100%;
 
-  .chat {
-    width:100%;
-
-    #chat-window {
-      background: #ddd;
-      border: 1px solid #CCC;
-      border-radius: 5px;
-      overflow-y: scroll;
-      padding: 5px;
-      margin-top: 10px;
-      height: $content-height;
-
-      #chat-status {
-        width: 25%;
-        display: block;
-        margin-top: 15px;
-      }
-
-      #chat-input {
-        border: 1px solid #ccc;
-        border-radius: 2px;
-        margin-top: 10px;
+      #chat-window {
+        background: #ddd;
+        border: 1px solid #CCC;
+        border-radius: 5px;
+        overflow-y: scroll;
         padding: 5px;
+        margin-top: 10px;
+        height: $content-height;
+
+        .chat-status {
+          width: 25%;
+          display: block;
+          margin-top: 15px;
+        }
+
+        .chat-input {
+          border: 1px solid #ccc;
+          border-radius: 2px;
+          margin-top: 10px;
+          padding: 5px;
+        }
       }
     }
-  }
 
-  div.scroll {
-    width: 100%;
-    height: $scroll-thumbnail_container-height;
-    overflow: scroll;
-    overflow-x: hidden;
+    div.scroll {
+      width: 100%;
+      height: $scroll-thumbnail_container-height;
+      overflow: scroll;
+      overflow-x: hidden;
 
-    .thumbnail {
-      max-height:100%;
-      max-width:100%;
-      padding: 10px;
-      margin: 5px;
+      .thumbnail {
+        max-height:100%;
+        max-width:100%;
+        padding: 10px;
+        margin: 5px;
 
-      img {
-        max-width: 100%;
+        img {
+          max-width: 100%;
+        }
       }
     }
   }
 }
+
+
 
 .cursor {
   cursor: pointer;

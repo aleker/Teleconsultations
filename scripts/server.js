@@ -49,10 +49,32 @@ const requestHandler = (request, response) => {
                 //console.log("Body: " + body);
                 console.log((new Date()) + "POST Request: End of image data.");
 
-                // broadcast message to all connected clients
-                const json = JSON.stringify({type: 'image', data: imageBody});
-                for (let [key, value] of clientsMap) {
-                    value.fd.sendUTF(json);
+                let json_message = false;
+                try {
+                    json_message = JSON.parse(imageBody);
+                } catch (e) {
+                    console.log('This doesn\'t look like a valid JSON: ', imageBody);
+                    return;
+                }
+
+                /**
+                 * Here you can type any other handler for new JSON message type
+                 */
+
+                switch (json_message.type) {
+                    case 'imageFromClient': {
+                        const dataToSendOnBroadcast = json_message.imageData;
+                        const sender = json_message.clientsId;
+                        // broadcast message to all connected clients except sender
+                        const json = JSON.stringify({type: 'image', data: dataToSendOnBroadcast});
+                        for (let [key, value] of clientsMap) {
+                            if (key === sender) continue;
+                            value.fd.sendUTF(json);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
                 }
             });
             // TODO zapisać obrazki w historii

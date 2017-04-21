@@ -5,6 +5,12 @@ let thumbnail = new function() {
     this.currentlyChosen = false;
 };
 
+let thisUser = {
+    name : false,       // name sent to the server
+    color : false,       // color assigned by the server
+    id : false
+};
+
 $(function () {
     "use strict";
 
@@ -14,15 +20,10 @@ $(function () {
 
     let chat = {
         window : $('#chat-window'),
-        input : $('#chat-input'),
-        status : $('#chat-status')
+        input : $('.chat-input'),
+        status : $('.chat-status')
     };
 
-    let thisUser = {
-        name : false,       // name sent to the server
-        color : false,       // color assigned by the server
-        id : false
-    };
 
     /**
      * Socket settings
@@ -50,7 +51,7 @@ $(function () {
 
     connection.onopen = function () {
         // first we want users to enter their names
-        chat.input.removeAttr('disabled');
+        chat.input.removeAttr('disabled').focus();
         chat.status.text('Choose name:');
     };
 
@@ -80,6 +81,8 @@ $(function () {
             thisUser.id = json_message.id;
             chat.status.text(thisUser.name + ': ').css('color', thisUser.color);
             chat.input.removeAttr('disabled').focus();
+            $('#loginPanel').hide();
+            $('#application').show();
             // from now user can start sending messages
         }
         else if (json_message.type === 'history') { // entire message history
@@ -220,8 +223,6 @@ function sendImageToServer() {
         //const image_data = document.getElementById(thumbnail.currentlyChosen).src;
         let image_data = $('#uploaded_image').css('background-image');
         image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
-        // TODO nie usuwać obrazka stąd!!!
-        removeImageById(thumbnail.currentlyChosen);
         let request = new ImageSender(image_data, "");
         request.init();
         request.send();
@@ -238,7 +239,7 @@ let ImageSender = function(data, name) {
     this.method = 'POST';
     this.dataType = 'text/html';
     this.async = true;
-    this.data = data;
+    this.data = JSON.stringify({type: 'imageFromClient', clientsId : thisUser.id, imageData: data});
 
     this.init = function () {
         this.server = new XMLHttpRequest();
