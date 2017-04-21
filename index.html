@@ -40,7 +40,11 @@
             </div>
         </div>
         <div>
-            <input type='file' class="button" id="readFileButton" onchange="readURL(this)" />
+            <label class="button" id="upload_image_label"> Upload picture
+                <input type='file' id="readFileButton" onchange="readURL(this)" />
+            </label>
+
+
         </div>
         <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
         <input type="submit" class="button" value="Invert colours" onclick="sendToPython()" />
