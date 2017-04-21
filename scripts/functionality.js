@@ -217,7 +217,9 @@ function currentlyChosenImageIdHandler(value) {
 
 function sendImageToServer() {
     if (thumbnail.currentlyChosen !== false) {
-        const image_data = document.getElementById(thumbnail.currentlyChosen).src;
+        //const image_data = document.getElementById(thumbnail.currentlyChosen).src;
+        let image_data = $('#uploaded_image').css('background-image');
+        image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
         // TODO nie usuwać obrazka stąd!!!
         removeImageById(thumbnail.currentlyChosen);
         let request = new ImageSender(image_data, "");

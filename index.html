@@ -31,16 +31,15 @@
                 <input type="text" id="chat-input" disabled="disabled" autofocus/>
             </div>
         </div>
-        <input id="readFileButton" type='file' onchange="readURL(this)" />
-        <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
+        <div>
+            <input type='file' class="button" id="readFileButton" onchange="readURL(this)" />
+        </div>
+        <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
+        <input type="submit" class="button" value="Invert colours" onclick="sendToPython()" />
 
         <div id="thumbnail_container" class="scroll">
         </div>
 
-        <div id="python_container">
-            <img id="python_image" src="#"/>
-            <input type="submit" value="python" onclick="sendToPython()" />
-        </div>
     </div>
 
 </body>

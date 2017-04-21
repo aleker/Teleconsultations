@@ -31,20 +31,27 @@ $(function() {
 // PYTHON
 function sendToPython() {
     // TODO DIFFERENT IMAGE PROCESSING METHODS
+    // get currently chosen thumbnail
+    const thumbnail_to_rewrite = thumbnail.currentlyChosen;
     let image_data = $('#uploaded_image').css('background-image');
-    console.log(image_data);
+    //console.log(image_data);
     image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
 
-    json_data = {'type': 'invert', 'image': image_data};
+
+    let json_data = {'type': 'invert', 'image': image_data};
     $.ajax({
         type: "POST",
         url: "http://localhost:9000",
         data: json_data,
         success: function (response) {
-            $('#python_image')
+            $('#uploaded_image')
+                .attr('src', response.data);
+            $('#' + thumbnail_to_rewrite)
                 .attr('src', response.data);
         }
     });
+
 }
+
 
 

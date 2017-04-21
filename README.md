@@ -33,10 +33,11 @@ Python server
 Installing dependencies (Python 2.7)
 ```
 cd python
-pip install -r requirements.txt
+pip2 install -r requirements.txt
 ```
 
 Running the server
 ```
+cd python
 python2 simpleserver.py
 ```
