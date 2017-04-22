@@ -181,7 +181,7 @@ function readURL(input) {
  */
 function createImageContainer(imgData) {
     const newThumbnail = document.createElement("div");
-    newThumbnail.setAttribute("class","thumbnail");
+    newThumbnail.setAttribute("class", "thumbnail");
 
     const newImage = document.createElement("img");
     newImage.setAttribute("src", imgData);
@@ -199,8 +199,11 @@ function createImageContainer(imgData) {
     newThumbnail.appendChild(newImage);
     document.getElementById("thumbnail_container").appendChild(newThumbnail);
 
-    // FILTERS
-    thumbnails_filters[id_name] = [];
+    let json_obj = {};
+    json_obj.filters = [];
+    json_obj.original_img = imgData;
+    thumbnails_filters[id_name] = json_obj;
+    console.log(thumbnails_filters);
 
     if (thumbnail.currentlyChosen === false) {
         currentlyChosenImageIdHandler(id_name);
@@ -259,8 +262,9 @@ let ImageSender = function(data, name) {
 };
 
 function changeChosenImageByClick(image) {
-    console.log("Previously applied filters: " + thumbnails_filters[image.id]);
-    changeCheckBoxes(thumbnails_filters[image.id]);
+    let img_object = thumbnails_filters[image.id];
+    console.log("Previously applied filters: " + img_object.filters);
+    changeCheckBoxes(img_object.filters);
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);
 }

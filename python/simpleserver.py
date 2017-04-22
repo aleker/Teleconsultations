@@ -4,6 +4,7 @@ import json
 from urlparse import parse_qs
 from image_processing import ImageHandler
 import argparse
+import cgi
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -16,6 +17,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         # Getting the type of processing to be applied on our image and the image
         processing_type = post_data['type[]']
+
+
         img_data = post_data['image'][0]
 
         print("New image! Filters: " + str(processing_type))

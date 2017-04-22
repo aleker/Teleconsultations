@@ -33,18 +33,19 @@ function sendToPython() {
     // TODO DIFFERENT IMAGE PROCESSING METHODS
     // get currently chosen thumbnail
     const thumbnail_to_rewrite = thumbnail.currentlyChosen;
-    console.log(thumbnail_to_rewrite);
+
     let image_data = $('#uploaded_image').css('background-image');
     //console.log(image_data);
     image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
 
-    let selected = [];
+    let selected = ['none'];
     $('#python_container input:checked').each(function() {
         selected.push($(this).attr('value'));
     });
 
 
-    let json_data = {'type': selected, 'image': image_data};
+    let json_data = {'type': selected, 'image': thumbnails_filters[thumbnail_to_rewrite].original_img};
+
     $.ajax({
         type: "POST",
         url: "http://localhost:9000",
@@ -54,7 +55,7 @@ function sendToPython() {
                 .attr('src', response.data);
             $('#' + thumbnail_to_rewrite)
                 .attr('src', response.data);
-            thumbnails_filters[thumbnail_to_rewrite] = selected;
+            thumbnails_filters[thumbnail_to_rewrite].filters = selected;
         }
     });
 
