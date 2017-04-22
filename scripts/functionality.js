@@ -275,6 +275,8 @@ function removeImageById(imageId) {
         currentlyChosenImageIdHandler(false);
     }
     $(document.getElementById(imageId)).closest('div').remove();
+    // Removing the image structure from the dictionary
+    delete thumbnails_filters[imageId];
 }
 
 function removeImageFromList(button) {
