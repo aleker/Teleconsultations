@@ -8,7 +8,9 @@
     <script src="libraries/jquery.ui.rotatable.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="libraries/wheelzoom.js"></script>
-
+    <script type='text/javascript' >
+        let thumbnails_filters = {};
+    </script>
     <script src="./scripts/functionality.js"></script>
     <script src="./scripts/image_processing.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -43,11 +45,15 @@
             <label class="button" id="upload_image_label"> Upload picture
                 <input type='file' id="readFileButton" onchange="readURL(this)" />
             </label>
-
-
         </div>
         <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
-        <input type="submit" class="button" value="Invert colours" onclick="sendToPython()" />
+        <div id="python_container">
+            <input type="checkbox" value="invert">Invert colours<br>
+            <input type="checkbox" value="sharpen">Sharpen the image<br>
+            <input type="checkbox" value="edges">Edge detection<br>
+            <input type="submit" class="button" value="Apply filters" onclick="sendToPython()" />
+        </div>
+
 
         <div id="thumbnail_container" class="scroll">
         </div>

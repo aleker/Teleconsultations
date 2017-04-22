@@ -15,10 +15,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         post_data = parse_qs(self.rfile.read(length).encode('utf-8'))
 
         # Getting the type of processing to be applied on our image and the image
-        processing_type = post_data['type'][0]
+        processing_type = post_data['type[]']
         img_data = post_data['image'][0]
 
-        print("New image! Processing type: " + processing_type)
+        print("New image! Filters: " + str(processing_type))
 
         image_handler = ImageHandler(img_data=img_data, processing_type=processing_type)
         # Getting the processed image

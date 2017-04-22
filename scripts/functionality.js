@@ -24,7 +24,6 @@ $(function () {
         status : $('.chat-status')
     };
 
-
     /**
      * Socket settings
      */
@@ -200,6 +199,8 @@ function createImageContainer(imgData) {
     newThumbnail.appendChild(newImage);
     document.getElementById("thumbnail_container").appendChild(newThumbnail);
 
+    // FILTERS
+    thumbnails_filters[id_name] = [];
 
     if (thumbnail.currentlyChosen === false) {
         currentlyChosenImageIdHandler(id_name);
@@ -250,7 +251,6 @@ let ImageSender = function(data, name) {
         console.log("XMLHttpRequest created.");
         return true;
     };
-
     this.send = function () {
         if (this.init()) {
             this.server.send(this.data);
@@ -259,6 +259,8 @@ let ImageSender = function(data, name) {
 };
 
 function changeChosenImageByClick(image) {
+    console.log("Previously applied filters: " + thumbnails_filters[image.id]);
+    changeCheckBoxes(thumbnails_filters[image.id]);
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);
 }
@@ -274,4 +276,13 @@ function removeImageById(imageId) {
 function removeImageFromList(button) {
     let imageId = $(button).closest('div').find('img').attr('id');
     removeImageById(imageId);
+}
+
+function changeCheckBoxes(applied_filters) {
+    $('input[type=checkbox]').each(function () {
+        if(applied_filters.includes(this.value))
+            $(this).prop('checked', true);
+        else
+            $(this).prop('checked', false);
+    });
 }

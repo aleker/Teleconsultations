@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageFilter
 import PIL.ImageOps
 import base64
 from io import BytesIO
@@ -8,7 +8,7 @@ from base64 import decodestring
 
 class ImageHandler():
     def __init__(self, processing_type, img_data):
-        self.processing_type = processing_type
+        self.processing_types_set = set(processing_type)
         index = img_data.find(",")
         self.image_data = img_data[index + 1:]
         self.image_type = img_data[:index]
@@ -27,18 +27,22 @@ class ImageHandler():
     def process_image(self):
         # Decode to PIL Image
         im = Image.open(BytesIO(base64.b64decode(self.image_data)))
-        processed_image = None
+        # Handeling the RGBA images
+        if im.mode == 'RGBA':
+            print("RGBA!")
+            r, g, b, a = im.split()
+            processed_image = Image.merge('RGB', (r, g, b))
+        else:
+            processed_image = im
 
-        if self.processing_type == 'invert':
+        if 'invert' in self.processing_types_set:
             print("inverting the colors")
-            # Check if image is RGBA Transparent. If yes, then convert to RGB first, invert and back to RGBA
-            if im.mode == 'RGBA':
-                r, g, b, a = im.split()
-                rgb_image = Image.merge('RGB', (r, g, b))
-                inverted_image = PIL.ImageOps.invert(rgb_image)
-                r2, g2, b2 = inverted_image.split()
-                processed_image = Image.merge('RGBA', (r2, g2, b2, a))
-            else:
-                processed_image = PIL.ImageOps.invert(im)
+            processed_image = PIL.ImageOps.invert(processed_image)
+
+        if 'sharpen' in self.processing_types_set:
+            processed_image = processed_image.filter(ImageFilter.SHARPEN)
+
+        if 'edges' in self.processing_types_set:
+            processed_image = processed_image.filter(ImageFilter.FIND_EDGES)
 
         return self.encode_to_base64(processed_image=processed_image)
