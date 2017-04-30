@@ -98,7 +98,8 @@ $(function () {
         }
         else if (json_message.type === 'image') {
             console.log("I RECEIVED AN IMAGE!!!!");
-            createImageContainer(json_message.data);
+            const newImageId = createImageContainer(json_message.imageData, json_message.filters);
+            sendToPython(newImageId);
         }
         else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json_message);
@@ -163,14 +164,14 @@ $(function () {
 
 
 /**
- * Upload image and send it to server
+ * Upload image
  */
 
 function readURL(input) {
     if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.onload = function (e) {
-            createImageContainer(e.target.result);
+            createImageContainer(e.target.result, false);
         };
         reader.readAsDataURL(input.files[0]);
     }
@@ -179,7 +180,7 @@ function readURL(input) {
 /**
  * Create new 'div' and 'img' for uploaded file
  */
-function createImageContainer(imgData) {
+function createImageContainer(imgData, filters) {
     const newThumbnail = document.createElement("div");
     newThumbnail.setAttribute("class", "thumbnail");
 
@@ -199,16 +200,22 @@ function createImageContainer(imgData) {
     newThumbnail.appendChild(newImage);
     document.getElementById("thumbnail_container").appendChild(newThumbnail);
 
+
     let json_obj = {};
     json_obj.filters = [];
+    if (filters !== false) { json_obj.filters = filters; }
     json_obj.original_img = imgData;
     thumbnails_filters[id_name] = json_obj;
-    console.log(thumbnails_filters);
+    console.log(thumbnails_filters[id_name].filters);
 
     if (thumbnail.currentlyChosen === false) {
-        currentlyChosenImageIdHandler(id_name);
+        changeChosenImageByClick(newImage);
         $('#uploaded_image').attr('src', imgData);
     }
+
+    console.log("New div added with id: " + id_name);
+
+    return id_name;
 }
 
 function currentlyChosenImageIdHandler(value) {
@@ -223,11 +230,20 @@ function currentlyChosenImageIdHandler(value) {
  */
 
 function sendImageToServer() {
-    if (thumbnail.currentlyChosen !== false) {
+    const thumbnail_to_send = thumbnail.currentlyChosen;
+    if (thumbnail_to_send !== false) {
+        /** ORIGINAL IMAGE DATA: */
+        const image_data = thumbnails_filters[thumbnail_to_send].original_img;
+        const selectedFilters = thumbnails_filters[thumbnail_to_send].filters;
+
+        /** IMAGE DATA FROM THUMBNAIL: */
         //const image_data = document.getElementById(thumbnail.currentlyChosen).src;
-        let image_data = $('#uploaded_image').css('background-image');
-        image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
-        let request = new ImageSender(image_data, "");
+
+        /** IMAGE DATA FROM MAIN CANVAS: */
+        // let image_data = $('#uploaded_image').css('background-image');
+        // image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
+
+        let request = new ImageSender(image_data, selectedFilters,"");
         request.init();
         request.send();
     }
@@ -237,13 +253,20 @@ function sendImageToServer() {
  * Sending image to server using HTTP connection
  */
 
-let ImageSender = function(data, name) {
+let ImageSender = function(data, selectedFilters, name) {
     this.server = false;
     this.url = window.location.protocol + "//" + window.location.host + name;
     this.method = 'POST';
     this.dataType = 'text/html';
     this.async = true;
-    this.data = JSON.stringify({type: 'imageFromClient', clientsId : thisUser.id, imageData: data});
+
+    console.log("Applied filters TO SEND: " + selectedFilters);
+    this.data = JSON.stringify({
+        type: 'imageFromClient',
+        filters: selectedFilters,
+        clientsId : thisUser.id,
+        imageData: data
+    });
 
     this.init = function () {
         this.server = new XMLHttpRequest();
@@ -263,7 +286,7 @@ let ImageSender = function(data, name) {
 
 function changeChosenImageByClick(image) {
     let img_object = thumbnails_filters[image.id];
-    console.log("Previously applied filters: " + img_object.filters);
+    console.log("Applied filters: " + img_object.filters + ' to image with id ' + image.id);
     changeCheckBoxes(img_object.filters);
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);

@@ -29,33 +29,39 @@ $(function() {
 
 
 // PYTHON
-function sendToPython() {
+function sendToPython(imageId) {
     // TODO DIFFERENT IMAGE PROCESSING METHODS
-    // get currently chosen thumbnail
-    const thumbnail_to_rewrite = thumbnail.currentlyChosen;
+    // get id of currently chosen thumbnail:
+    const currentlyChosenId = thumbnail.currentlyChosen;
 
-    let image_data = $('#uploaded_image').css('background-image');
-    //console.log(image_data);
-    image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
+    // TODO remove unused code:
+    // let image_data = $('#uploaded_image').css('background-image');
+    // //console.log(image_data);
+    // image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
 
-    let selected = ['none'];
-    $('#python_container input:checked').each(function() {
-        selected.push($(this).attr('value'));
-    });
+    let currentFilters = ['none'];
+    /** if currently chosen image is the one we want to filter - read filters from checkboxes */
+    if (currentlyChosenId === imageId) {
+        $('#python_container input:checked').each(function () {
+            currentFilters.push($(this).attr('value'));
+        });
+    }
+    /** in other case when image we want to filter is not the current chosen image - read filters from thumbnails_filters */
+    else currentFilters = thumbnails_filters[imageId].filters;
 
-
-    let json_data = {'type': selected, 'image': thumbnails_filters[thumbnail_to_rewrite].original_img};
+    let json_data = {'type': currentFilters, 'image': thumbnails_filters[imageId].original_img};
 
     $.ajax({
         type: "POST",
         url: "http://localhost:9000",
         data: json_data,
         success: function (response) {
-            $('#uploaded_image')
-                .attr('src', response.data);
-            $('#' + thumbnail_to_rewrite)
-                .attr('src', response.data);
-            thumbnails_filters[thumbnail_to_rewrite].filters = selected;
+            $('#' + imageId).attr('src', response.data);
+            thumbnails_filters[imageId].filters = currentFilters;
+            /** if currently chosen image is the one we filtered - also change image on canvas */
+            if (currentlyChosenId === imageId) {
+                $('#uploaded_image').attr('src', response.data);
+            }
         }
     });
 
