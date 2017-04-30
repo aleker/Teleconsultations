@@ -1,5 +1,9 @@
 $(function() {
 
+    $(' #python_container input').on('click', function(){
+        sendToPython(thumbnail.currentlyChosen);
+    });
+
     wheelzoom(document.querySelector('img.zoom'));
 
     const params = {
@@ -33,6 +37,7 @@ function sendToPython(imageId) {
     // TODO DIFFERENT IMAGE PROCESSING METHODS
     // get id of currently chosen thumbnail:
     const currentlyChosenId = thumbnail.currentlyChosen;
+    thumbnails_filters[imageId].brightness = $('input[name=slide]').val();
 
     // TODO remove unused code:
     // let image_data = $('#uploaded_image').css('background-image');
@@ -49,7 +54,7 @@ function sendToPython(imageId) {
     /** in other case when image we want to filter is not the current chosen image - read filters from thumbnails_filters */
     else currentFilters = thumbnails_filters[imageId].filters;
 
-    let json_data = {'type': currentFilters, 'image': thumbnails_filters[imageId].original_img};
+    let json_data = {'type': currentFilters, 'image': thumbnails_filters[imageId].original_img, 'brightness': thumbnails_filters[imageId].brightness};
 
     $.ajax({
         type: "POST",
@@ -64,8 +69,9 @@ function sendToPython(imageId) {
             }
         }
     });
-
 }
 
-
+function updateSlider() {
+    sendToPython(thumbnail.currentlyChosen);
+}
 

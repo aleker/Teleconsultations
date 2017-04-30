@@ -48,10 +48,18 @@
         </div>
         <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
         <div id="python_container">
-            <input type="checkbox" value="invert">Invert colours<br>
-            <input type="checkbox" value="sharpen">Sharpen the image<br>
-            <input type="checkbox" value="edges">Edge detection<br>
+            <label>
+                <input type="checkbox" value="invert">
+            </label>Invert colours<br>
+            <label>
+                <input type="checkbox" value="sharpen">
+            </label>Sharpen the image<br>
+            <label>
+                <input type="checkbox" value="edges">
+            </label>Edge detection<br>
+            <div id="slider">Brightness<input name="slide" type="range" min="0" max="200" step="5" value="100" onchange="updateSlider()" /></div>
             <input type="submit" class="button" value="Apply filters" onclick="sendToPython(thumbnail.currentlyChosen)" />
+            <input type=hidden id="hiddenValue" name="hiddenValue" value=100/>
         </div>
 
 

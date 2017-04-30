@@ -1,4 +1,4 @@
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageEnhance
 import PIL.ImageOps
 import base64
 from io import BytesIO
@@ -7,11 +7,12 @@ from base64 import decodestring
 
 
 class ImageHandler():
-    def __init__(self, processing_type, img_data):
+    def __init__(self, processing_type, img_data, brightness):
         self.processing_types_set = set(processing_type)
         index = img_data.find(",")
         self.image_data = img_data[index + 1:]
         self.image_type = img_data[:index]
+        self.brightness = float(brightness) / 100.0
 
         # Saving image to file
         with open("original_image.png", "wb") as f:
@@ -34,7 +35,8 @@ class ImageHandler():
             processed_image = Image.merge('RGB', (r, g, b))
         else:
             processed_image = im
-
+        
+        print("Applying filters.")
         if 'invert' in self.processing_types_set:
             print("inverting the colors")
             processed_image = PIL.ImageOps.invert(processed_image)
@@ -44,5 +46,8 @@ class ImageHandler():
 
         if 'edges' in self.processing_types_set:
             processed_image = processed_image.filter(ImageFilter.FIND_EDGES)
+
+        enhancer = ImageEnhance.Brightness(processed_image)
+        processed_image = enhancer.enhance(self.brightness)
 
         return self.encode_to_base64(processed_image=processed_image)

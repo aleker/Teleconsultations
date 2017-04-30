@@ -98,7 +98,8 @@ $(function () {
         }
         else if (json_message.type === 'image') {
             console.log("I RECEIVED AN IMAGE!!!!");
-            const newImageId = createImageContainer(json_message.imageData, json_message.filters);
+            const newImageId = createImageContainer(json_message.imageData, json_message.filters, json_message.brightness);
+            changeSlider(json_message.brightness);
             sendToPython(newImageId);
         }
         else {
@@ -171,7 +172,7 @@ function readURL(input) {
     if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.onload = function (e) {
-            createImageContainer(e.target.result, false);
+            createImageContainer(e.target.result, false, false);
         };
         reader.readAsDataURL(input.files[0]);
     }
@@ -180,7 +181,7 @@ function readURL(input) {
 /**
  * Create new 'div' and 'img' for uploaded file
  */
-function createImageContainer(imgData, filters) {
+function createImageContainer(imgData, filters, imageBrightness) {
     const newThumbnail = document.createElement("div");
     newThumbnail.setAttribute("class", "thumbnail");
 
@@ -203,7 +204,9 @@ function createImageContainer(imgData, filters) {
 
     let json_obj = {};
     json_obj.filters = [];
+    json_obj.brightness = 100;
     if (filters !== false) { json_obj.filters = filters; }
+    if (imageBrightness !== false) { json_obj.brightness = imageBrightness; }
     json_obj.original_img = imgData;
     thumbnails_filters[id_name] = json_obj;
     console.log(thumbnails_filters[id_name].filters);
@@ -234,6 +237,7 @@ function sendImageToServer() {
         /** ORIGINAL IMAGE DATA: */
         const image_data = thumbnails_filters[thumbnail_to_send].original_img;
         const selectedFilters = thumbnails_filters[thumbnail_to_send].filters;
+        const brightness = thumbnails_filters[thumbnail_to_send].brightness;
 
         /** IMAGE DATA FROM THUMBNAIL: */
         //const image_data = document.getElementById(thumbnail.currentlyChosen).src;
@@ -242,7 +246,7 @@ function sendImageToServer() {
         // let image_data = $('#uploaded_image').css('background-image');
         // image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
 
-        let request = new ImageSender(image_data, selectedFilters,"");
+        let request = new ImageSender(image_data, selectedFilters, brightness, "");
         request.init();
         request.send();
     }
@@ -252,7 +256,7 @@ function sendImageToServer() {
  * Sending image to server using HTTP connection
  */
 
-let ImageSender = function(data, selectedFilters, name) {
+let ImageSender = function(data, selectedFilters, brightness, name) {
     this.server = false;
     this.url = window.location.protocol + "//" + window.location.host + name;
     this.method = 'POST';
@@ -263,8 +267,9 @@ let ImageSender = function(data, selectedFilters, name) {
     this.data = JSON.stringify({
         type: 'imageFromClient',
         filters: selectedFilters,
-        clientsId : thisUser.id,
-        imageData: data
+        clientsId: thisUser.id,
+        imageData: data,
+        brightness: brightness
     });
 
     this.init = function () {
@@ -287,6 +292,7 @@ function changeChosenImageByClick(image) {
     let img_object = thumbnails_filters[image.id];
     console.log("Applied filters: " + img_object.filters + ' to image with id ' + image.id);
     changeCheckBoxes(img_object.filters);
+    changeSlider(img_object.brightness);
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);
 }
@@ -313,4 +319,9 @@ function changeCheckBoxes(applied_filters) {
         else
             $(this).prop('checked', false);
     });
+}
+
+function changeSlider(brightness) {
+    $('input[type=hidden]').val(brightness);
+    $('input[name=slide]').val(brightness);
 }
