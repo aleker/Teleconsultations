@@ -20,8 +20,12 @@ const webSocketServer = require('websocket').server;
 const hostname = process.argv[2] || '0.0.0.0';
 const port = process.argv[3] || 8080;
 
-// latest 100 messages
+// latest historyMaxSize chat messages
 let history = [];
+const historyMaxSize = -100;
+// latest imgHistoryMaxSize image messages:
+let imgHistory= [];
+const imgHistoryMaxSize = -10;
 // list of currently connected clients (users)
 let indexOfClient = 0;
 let clientsMap = new Map();
@@ -95,14 +99,18 @@ const requestHandler = (request, response) => {
                             if (key === sender) continue;
                             value.fd.sendUTF(json);
                         }
+                        imgHistory.push(json);
+                        imgHistory.slice(imgHistoryMaxSize);
+
+                        // TODO removing saving image on server:
                         // SAVE IMAGE ON SERVER SIDE:
-                        // TODO adding better file naming system:
-                        const imageName = 'example.jpg';
-                        const base64Data = dataToSendOnBroadcast.substring(dataToSendOnBroadcast.indexOf("base64,") + 7);
-                        fs.writeFile(pathForSavedImages + '/' + imageName, base64Data, 'base64', function (err) {
-                            if (err) throw err;
-                            console.log('File saved');
-                        });
+                        // const imageName = 'example.jpg';
+                        // const base64Data = dataToSendOnBroadcast.substring(dataToSendOnBroadcast.indexOf("base64,") + 7);
+                        // fs.writeFile(pathForSavedImages + '/' + imageName, base64Data, 'base64', function (err) {
+                        //     if (err) throw err;
+                        //     console.log('IMAGE file saved');
+                        // });
+                        // ---------------------------------------
                         break;
                     }
                     default:
@@ -208,11 +216,6 @@ wsServer.on('request', function (request) {
 
     console.log((new Date()) + ' Connection accepted. New user\'s id: ' + userId);
 
-    // send back chat history
-    if (history.length > 0) {
-        connection.sendUTF(JSON.stringify({type: 'history', data: history}));
-    }
-
     // receive message from user
     connection.on('message', function (message) {
         if (message.type === 'utf8') { // accept only utf8 messages
@@ -237,6 +240,15 @@ wsServer.on('request', function (request) {
                     if (userColor == false) userColor = 'black';
                     connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId}));
                     console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
+                    // SENDING HISTORY:
+                    // send back chat history
+                    if (history.length > 0) {
+                        connection.sendUTF(JSON.stringify({type: 'history', data: history}));
+                    }
+                    // send back image history
+                    for (let imgId in imgHistory) {
+                        connection.sendUTF(imgHistory[imgId]);
+                    }
                 }
                 else if (json_message.type === 'chatMessage'){ // log and broadcast the message
                     console.log("CHAT-MESSAGE received.");
@@ -251,7 +263,7 @@ wsServer.on('request', function (request) {
                     };
                     history.push(obj);
                     // slice history so the length won't cross 100 messages
-                    history = history.slice(-100);
+                    history = history.slice(historyMaxSize);
 
                     // broadcast message to all connected clients
                     const json = JSON.stringify({type: 'chatMessageOnBroadcast', data: obj});

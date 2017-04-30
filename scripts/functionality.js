@@ -224,7 +224,6 @@ function currentlyChosenImageIdHandler(value) {
     else $('#sendImageButton').removeAttr('disabled');
 }
 
-
 /**
  * Send image data to server
  */
