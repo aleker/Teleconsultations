@@ -36,6 +36,7 @@ $(function() {
 
 // PYTHON
 function sendToPython(imageId) {
+    exportMarkersFromImage();
     // TODO DIFFERENT IMAGE PROCESSING METHODS
     // get id of currently chosen thumbnail:
     const currentlyChosenId = thumbnail.currentlyChosen;
@@ -78,21 +79,6 @@ function sendToPython(imageId) {
  * MARKERS HANDLER
  */
 
-$(function () {
-    /** toggleButton handler */
-    $("#toggleEdit").on("click", function () {
-        if (imageWithMarkers !== false) {
-            const thisToggleButton = $(this);
-            if (thisToggleButton.val() === "Add/Edit Markers") {
-                thisToggleButton.val("View Markers");
-                imageWithMarkers.imgNotes("option", "canEdit", true);
-            } else {
-                thisToggleButton.val("Add/Edit Markers");
-                imageWithMarkers.imgNotes('option', 'canEdit', false);
-            }
-        }
-    });
-});
 
 /** this function reads notes from json and adds them to imageWithMarkers */
 function importMarkers(jsonMarkers) {
@@ -129,7 +115,7 @@ function refreshMarkerImageAndMarkers() {
             return elem;
         }
     });
-    $("#toggleEdit").val("Add/Edit Markers");
+    imageWithMarkers.imgNotes("option", "canEdit", true);
     if (thumbnail.currentlyChosen in markers_array)
         importMarkers(markers_array[thumbnail.currentlyChosen]);
 }
