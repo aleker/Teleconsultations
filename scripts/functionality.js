@@ -97,8 +97,9 @@ $(function () {
                 json_message.data.color, new Date(json_message.data.time));
         }
         else if (json_message.type === 'image') {
-            console.log("I RECEIVED AN IMAGE!!!!");
+            console.log("I RECEIVED AN IMAGE with markers!!!!" + json_message.markers);
             const newImageId = createImageContainer(json_message.imageData, json_message.filters);
+            markers_array[newImageId] = json_message.markers;
             sendToPython(newImageId);
         }
         else {
@@ -180,12 +181,12 @@ function readURL(input) {
 /**
  * Create new 'div' and 'img' for uploaded file
  */
-function createImageContainer(imgData, filters) {
+function createImageContainer(imageData, filters) {
     const newThumbnail = document.createElement("div");
     newThumbnail.setAttribute("class", "thumbnail");
 
     const newImage = document.createElement("img");
-    newImage.setAttribute("src", imgData);
+    newImage.setAttribute("src", imageData);
     newImage.setAttribute("class", "hover-shadow cursor");
     const id_name = "thumbnail_img_" + (thumbnail.imageCounter++).toString();
     newImage.setAttribute("id", id_name);
@@ -202,15 +203,15 @@ function createImageContainer(imgData, filters) {
 
 
     let json_obj = {};
-    json_obj.filters = [];
+    json_obj.filters = ['none'];
     if (filters !== false) { json_obj.filters = filters; }
-    json_obj.original_img = imgData;
+    json_obj.original_img = imageData;
     thumbnails_filters[id_name] = json_obj;
     console.log(thumbnails_filters[id_name].filters);
 
     if (thumbnail.currentlyChosen === false) {
         changeChosenImageByClick(newImage);
-        $('#uploaded_image').attr('src', imgData);
+        $('#uploaded_image').attr('src', imageData);
         refreshMarkerImageAndMarkers();
     }
 
@@ -235,6 +236,7 @@ function sendImageToServer() {
         /** ORIGINAL IMAGE DATA: */
         const image_data = thumbnails_filters[thumbnail_to_send].original_img;
         const selectedFilters = thumbnails_filters[thumbnail_to_send].filters;
+        exportMarkersFromImage();
 
         /** IMAGE DATA FROM THUMBNAIL: */
         //const image_data = document.getElementById(thumbnail.currentlyChosen).src;
@@ -261,9 +263,15 @@ let ImageSender = function(data, selectedFilters, name) {
     this.async = true;
 
     console.log("Applied filters TO SEND: " + selectedFilters);
+    let actualMarkers = false;
+    if (thumbnail.currentlyChosen in markers_array) {
+        console.log("WYSYŁAM MARKERY!!!" + markers_array[thumbnail.currentlyChosen]);
+        actualMarkers = markers_array[thumbnail.currentlyChosen];
+    }
     this.data = JSON.stringify({
         type: 'imageFromClient',
         filters: selectedFilters,
+        markers: actualMarkers,
         clientsId : thisUser.id,
         imageData: data
     });
@@ -297,6 +305,8 @@ function changeChosenImageByClick(image) {
 function removeImageById(imageId) {
     if (imageId === thumbnail.currentlyChosen) {
         $('#uploaded_image').attr('src', "");
+        imageWithMarkers.imgNotes("destroy");
+        imageWithMarkers = false;
         currentlyChosenImageIdHandler(false);
     }
     $(document.getElementById(imageId)).closest('div').remove();
@@ -307,6 +317,8 @@ function removeImageById(imageId) {
 function removeImageFromList(button) {
     let imageId = $(button).closest('div').find('img').attr('id');
     removeImageById(imageId);
+    if (imageId in markers_array)
+        delete markers_array[imageId];
 }
 
 function changeCheckBoxes(applied_filters) {

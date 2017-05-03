@@ -79,11 +79,11 @@ $(function () {
     $("#toggleEdit").on("click", function () {
         if (imageWithMarkers !== false) {
             const thisToggleButton = $(this);
-            if (thisToggleButton.text() === "Edit") {
-                thisToggleButton.text("View");
+            if (thisToggleButton.val() === "Add/Edit Markers") {
+                thisToggleButton.val("View Markers");
                 imageWithMarkers.imgNotes("option", "canEdit", true);
             } else {
-                thisToggleButton.text('Edit');
+                thisToggleButton.val("Add/Edit Markers");
                 imageWithMarkers.imgNotes('option', 'canEdit', false);
             }
         }
@@ -92,7 +92,7 @@ $(function () {
 
 /** this function reads notes from json and adds them to imageWithMarkers */
 function importMarkers(jsonMarkers) {
-    if (jsonMarkers !== false) {
+    if (jsonMarkers !== false && jsonMarkers.length > 0) {
     imageWithMarkers.imgNotes("import", jsonMarkers);
     }
 }
@@ -125,8 +125,7 @@ function refreshMarkerImageAndMarkers() {
             return elem;
         }
     });
-    console.log("Marker count after create " + imageWithMarkers.imgNotes("count"));
-    $("#toggleEdit").text("Edit");
+    $("#toggleEdit").val("Add/Edit Markers");
     if (thumbnail.currentlyChosen in markers_array)
         importMarkers(markers_array[thumbnail.currentlyChosen]);
 }
