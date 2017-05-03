@@ -54,10 +54,9 @@
             </label>
         </div>
         <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
-        <button id="initializeMarkers" onclick="initializeMarkers()">Markers</button>
         <button id="toggleEdit">View</button>
-        <button id="export">Export</button>
-        <button id="refresh">Refresh</button>
+        <button id="export" onclick="exportMarkersFromImage()">Export</button>
+        <button id="refresh" onclick="refreshMarkerImageAndMarkers()">Refresh</button>
         <div id="python_container">
             <input type="checkbox" value="invert">Invert colours<br>
             <input type="checkbox" value="sharpen">Sharpen the image<br>
