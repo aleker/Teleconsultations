@@ -302,8 +302,8 @@ input[type="file"]{
 }
 
 .marker{
-  width: 27px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
   position: absolute;
   left: -13px;
   top: -35px;
@@ -312,10 +312,10 @@ input[type="file"]{
   line-height: 25px;
   letter-spacing: -1px;
   text-align: center;
-  color: #ff32d2;
-  background: #13fd50;
+  color: transparent;
 }
 
 .marker.black{
-  //background: url(markerBlack.png);
+  background: url(markerRed.svg);
+  //z-index: 150;
 }

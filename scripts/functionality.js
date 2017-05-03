@@ -288,6 +288,7 @@ function changeChosenImageByClick(image) {
     let img_object = thumbnails_filters[image.id];
     console.log("Applied filters: " + img_object.filters + ' to image with id ' + image.id);
     changeCheckBoxes(img_object.filters);
+    exportMarkersFromImage();
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);
     refreshMarkerImageAndMarkers();
