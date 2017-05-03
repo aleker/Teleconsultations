@@ -26,6 +26,7 @@ $grey: #586E72;
 }
 
 body {
+  zoom: 1;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -297,3 +298,22 @@ input[type="file"]{
   right: -20px;
 }
 
+.marker{
+  width: 27px;
+  height: 40px;
+  position: absolute;
+  left: -13px;
+  top: -35px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 25px;
+  letter-spacing: -1px;
+  text-align: center;
+  color: #ff32d2;
+
+  z-index: 100;
+}
+
+.marker.black{
+  background: url(marker_black.png);
+}

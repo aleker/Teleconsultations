@@ -314,3 +314,70 @@ function changeCheckBoxes(applied_filters) {
             $(this).prop('checked', false);
     });
 }
+
+
+function initializeMarkers() {
+    const imageWithMarkers = $("#uploaded_image").imgNotes({
+        onShow: $.noop,
+        onAdd: function () {
+            this.options.vAll = "bottom";
+            this.options.hAll = "middle";
+            const elem = $(document.createElement('span')).addClass("marker black").html(this.noteCount).attr("title", "");
+            const self = this;
+            $(elem).tooltip({
+                content: function () {
+                    return $(elem).data("note");
+                }
+            });
+            return elem;
+        }
+    });
+
+    /** this function reads old notes once and adds them to imageWithMarkers */
+    imageWithMarkers.one("load", function () {
+        imageWithMarkers.imgNotes("import",
+            [{x: "0.5", y: "0.5", note: "AFL Grand Final Trophy"},
+                {
+                    x: "0.322", y: "0.269", note: '\<center><b>Brisbane Lions Flag</b><br/>\
+                    <img src="http://www.lions.com.au/static-resources/themes/brisbane/images/logo-brisbane.png"/></center>\
+                    <a href="http://www.lions.com.au/" target="blank">The Brisbane Lions</a> \
+                    is an <a href="http://en.wikipedia.org/wiki/Australian_rules_football" target="blank">Australian rules football club.</a>'
+                },
+                {x: "0.824", y: "0.593", note: "Fluffy microphone"}]
+        );
+    });
+
+    /** toggleButton - starting settings */
+    const toggleButton = $("#toggleEdit");
+    if (imageWithMarkers.imgNotes("option", "canEdit")) {
+        toggleButton.text("View");
+    } else {
+        toggleButton.text("Edit");
+    }
+    /** toggleButton handler */
+    toggleButton.on("click", function () {
+        const thisToggleButton = $(this);
+        if (thisToggleButton.text() === "Edit") {
+            thisToggleButton.text("View");
+            imageWithMarkers.imgNotes("option", "canEdit", true);
+        } else {
+            thisToggleButton.text('Edit');
+            imageWithMarkers.imgNotes('option', 'canEdit', false);
+        }
+    });
+
+    /** exportButton handler */
+    const exportButton = $("#export");
+    exportButton.on("click", function () {
+        const notes = imageWithMarkers.imgNotes('export');
+        alert('Markers exported');
+    });
+
+    const refreshButton = $("#refresh");
+    refreshButton.on("click", function () {
+
+    });
+
+    // TODO zostawić?
+    changeChosenImageByClick(document.getElementById(thumbnail.currentlyChosen));
+}

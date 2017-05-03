@@ -8,6 +8,12 @@
     <script src="libraries/jquery.ui.rotatable.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="libraries/wheelzoom.js"></script>
+
+    <script type="text/javascript" src="libraries/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="libraries/imgViewer.js"></script>
+    <script type="text/javascript" src="libraries/imgNotes.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" media="screen">
+
     <script type='text/javascript' >
         let thumbnails_filters = {};
     </script>
@@ -27,8 +33,9 @@
 
 <div id="application">
     <div id="main-workspace" class="column-big-9 column-medium-9 column-small-12">
-        <div class="box">
+        <div id="workspace" class="box">
             <div id="container">
+                <!--<img class='zoom' id="uploaded_image" src="http://i.imgur.com/uxFECXo.jpg" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>-->
                 <img class='zoom' id="uploaded_image" src="#" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>
             </div>
         </div>
@@ -47,13 +54,16 @@
             </label>
         </div>
         <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
+        <button id="initializeMarkers" onclick="initializeMarkers()">Markers</button>
+        <button id="toggleEdit">View</button>
+        <button id="export">Export</button>
+        <button id="refresh">Refresh</button>
         <div id="python_container">
             <input type="checkbox" value="invert">Invert colours<br>
             <input type="checkbox" value="sharpen">Sharpen the image<br>
             <input type="checkbox" value="edges">Edge detection<br>
             <input type="submit" class="button" value="Apply filters" onclick="sendToPython(thumbnail.currentlyChosen)" />
         </div>
-
 
         <div id="thumbnail_container" class="scroll">
         </div>
