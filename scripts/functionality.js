@@ -211,6 +211,7 @@ function createImageContainer(imgData, filters) {
     if (thumbnail.currentlyChosen === false) {
         changeChosenImageByClick(newImage);
         $('#uploaded_image').attr('src', imgData);
+        refreshMarkerImageAndMarkers();
     }
 
     console.log("New div added with id: " + id_name);
@@ -289,6 +290,7 @@ function changeChosenImageByClick(image) {
     changeCheckBoxes(img_object.filters);
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);
+    refreshMarkerImageAndMarkers();
 }
 
 function removeImageById(imageId) {
@@ -315,68 +317,6 @@ function changeCheckBoxes(applied_filters) {
     });
 }
 
-/**
- * MARKERS HANDLER
- */
 
-function initializeImageForMarkers() {
-    imageWithMarkers = $("#uploaded_image").imgNotes({
-        onShow: $.noop,
-        onAdd: function () {
-            this.options.vAll = "bottom";
-            this.options.hAll = "middle";
-            const elem = $(document.createElement('span')).addClass("marker black").html(this.noteCount).attr("title", "");
-            const self = this;
-            $(elem).tooltip({
-                content: function () {
-                    return $(elem).data("note");
-                }
-            });
-            return elem;
-        }
-    });
-    $("#toggleEdit").text("Edit");
-    // TODO zostawić?
-    changeChosenImageByClick(document.getElementById(thumbnail.currentlyChosen));
-}
 
-$(function () {
-    /** toggleButton handler */
-    $("#toggleEdit").on("click", function () {
-        if (imageWithMarkers !== false) {
-            const thisToggleButton = $(this);
-            if (thisToggleButton.text() === "Edit") {
-                thisToggleButton.text("View");
-                imageWithMarkers.imgNotes("option", "canEdit", true);
-            } else {
-                thisToggleButton.text('Edit');
-                imageWithMarkers.imgNotes('option', 'canEdit', false);
-            }
-        }
-    });
-});
-
-/** this function reads notes from json and adds them to imageWithMarkers */
-function importMarkers(jsonMarkers) {
-    if (imageWithMarkers !== false) {
-        imageWithMarkers.imgNotes("import", jsonMarkers);
-    }
-}
-
-/** this function turns off and on marker plugin (useful when image change) */
-function refreshMarkerImageAndMarkers() {
-    if (imageWithMarkers !== false) {
-        imageWithMarkers.imgNotes("destroy");
-        imageWithMarkers = false;
-    }
-    initializeImageForMarkers();
-}
-
-/** this function exports actual markers */
-function exportMarkersFromImage() {
-    if (imageWithMarkers !== false) {
-        const notes = imageWithMarkers.imgNotes('export');
-        alert('Markers exported');
-    }
-}
 

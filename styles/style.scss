@@ -237,6 +237,9 @@ img.zoom{
     max-height:100%;
     max-width:100%;
     //z-index: -1;
+
+  opacity: 0.0;
+  filter: alpha(opacity=50); /* For IE8 and earlier */
   }
 
 .button {
@@ -310,10 +313,9 @@ input[type="file"]{
   letter-spacing: -1px;
   text-align: center;
   color: #ff32d2;
-
-  z-index: 100;
+  background: #13fd50;
 }
 
 .marker.black{
-  background: url(marker_black.png);
+  //background: url(markerBlack.png);
 }

@@ -1,3 +1,5 @@
+let thumbnails_filters = {};
+let markers_array = {};
 $(function() {
 
     wheelzoom(document.querySelector('img.zoom'));
@@ -61,11 +63,83 @@ function sendToPython(imageId) {
             /** if currently chosen image is the one we filtered - also change image on canvas */
             if (currentlyChosenId === imageId) {
                 $('#uploaded_image').attr('src', response.data);
+                refreshMarkerImageAndMarkers();
             }
         }
     });
 
 }
+
+/**
+ * MARKERS HANDLER
+ */
+
+$(function () {
+    /** toggleButton handler */
+    $("#toggleEdit").on("click", function () {
+        if (imageWithMarkers !== false) {
+            const thisToggleButton = $(this);
+            if (thisToggleButton.text() === "Edit") {
+                thisToggleButton.text("View");
+                imageWithMarkers.imgNotes("option", "canEdit", true);
+            } else {
+                thisToggleButton.text('Edit');
+                imageWithMarkers.imgNotes('option', 'canEdit', false);
+            }
+        }
+    });
+});
+
+/** this function reads notes from json and adds them to imageWithMarkers */
+function importMarkers(jsonMarkers) {
+    if (jsonMarkers !== false) {
+    imageWithMarkers.imgNotes("import", jsonMarkers
+        // [{x: "0.5", y: "0.5", note: "AFL Grand Final Trophy"},
+        //     {
+        //         x: "0.322", y: "0.269", note: '\<center><b>Brisbane Lions Flag</b><br/>\
+        //             <img src="http://www.lions.com.au/static-resources/themes/brisbane/images/logo-brisbane.png"/></center>\
+        //             <a href="http://www.lions.com.au/" target="blank">The Brisbane Lions</a> \
+        //             is an <a href="http://en.wikipedia.org/wiki/Australian_rules_football" target="blank">Australian rules football club.</a>'
+        //     },
+        //     {x: "0.824", y: "0.593", note: "Fluffy microphone"}]
+        );
+    }
+}
+
+/** this function exports actual markers */
+function exportMarkersFromImage() {
+    if (imageWithMarkers !== false) {
+        markers_array[thumbnail.currentlyChosen] = imageWithMarkers.imgNotes('export');
+        console.log(thumbnail.currentlyChosen + ' exported');
+    }
+}
+
+/** this function turns off and on marker plugin (useful when image change) */
+function refreshMarkerImageAndMarkers() {
+    if (imageWithMarkers !== false) {
+        exportMarkersFromImage();
+        imageWithMarkers.imgNotes("destroy");
+    }
+    imageWithMarkers = $("#uploaded_image").imgNotes({
+        onShow: $.noop,
+        onAdd: function () {
+            this.options.vAll = "bottom";
+            this.options.hAll = "middle";
+            const elem = $(document.createElement('span')).addClass("marker black").html(this.noteCount).attr("title", "");
+            const self = this;
+            $(elem).tooltip({
+                content: function () {
+                    return $(elem).data("note");
+                }
+            });
+            return elem;
+        }
+    });
+    $("#toggleEdit").text("Edit");
+    if (thumbnail.currentlyChosen in markers_array)
+        importMarkers(markers_array[thumbnail.currentlyChosen]);
+}
+
 
 
 

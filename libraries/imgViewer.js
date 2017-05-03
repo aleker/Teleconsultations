@@ -23,8 +23,9 @@
  *		provide zoom and pan
  */
 			// MY CHANGES!!!---------------
-            let image_data = $('#uploaded_image').css('background-image');
-            image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
+            // let image_data = $('#uploaded_image').css('background-image');
+            // image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
+            let image_data = $('#uploaded_image').attr('src');
             self.zimg = $("<img/>", {"src": image_data}).appendTo('#container').wrap("<div class='viewport'/>");
 			//self.zimg = $("<img/>", {"src": self.img.src}).appendTo('body').wrap("<div class='viewport'/>");
 			// -----------------------------
@@ -70,18 +71,18 @@
                     vLeft = 0;
 
 					$view.css({
-								position: "absolute",
-								//position: "relative",
+								//position: "absolute",
+								position: "relative",
 								overflow: "hidden",
 								top: vTop+"px",
 								left: vLeft+"px",
 								width: width+"px",
 								height: height+"px",
-
-                        marginTop: 0,
-                        marginRight: "auto",
-                        marginBottom: 0,
-                        marginLeft: "auto"
+                        // //
+                        // marginTop: 0,
+                        // marginRight: "auto",
+                        // marginBottom: 0,
+                        // marginLeft: "auto"
 					});
 //			the zoom and pan image is position relative to the view container
 					$zimg.css({
@@ -90,7 +91,7 @@
 								//left: 0+"px",
 								width: width+"px",
 								height: height+"px",
-
+                                //
                         		marginTop: 0,
                         		marginRight: "auto",
                         		marginBottom: 0,
