@@ -1,5 +1,5 @@
 let connection = false;
-const imageWidth = 300;
+let imageWithMarkers = false;
 let thumbnail = new function() {
     this.imageCounter = 0;
     this.currentlyChosen = false;
@@ -100,6 +100,7 @@ $(function () {
             console.log("I RECEIVED AN IMAGE!!!!");
             const newImageId = createImageContainer(json_message.imageData, json_message.filters, json_message.brightness);
             changeSlider(json_message.brightness);
+            markers_array[newImageId] = json_message.markers;
             sendToPython(newImageId);
         }
         else {
@@ -203,7 +204,7 @@ function createImageContainer(imgData, filters, imageBrightness) {
 
 
     let json_obj = {};
-    json_obj.filters = [];
+    json_obj.filters = ['none'];
     json_obj.brightness = 100;
     if (filters !== false) { json_obj.filters = filters; }
     if (imageBrightness !== false) { json_obj.brightness = imageBrightness; }
@@ -214,6 +215,7 @@ function createImageContainer(imgData, filters, imageBrightness) {
     if (thumbnail.currentlyChosen === false) {
         changeChosenImageByClick(newImage);
         $('#uploaded_image').attr('src', imgData);
+        refreshMarkerImageAndMarkers();
     }
 
     console.log("New div added with id: " + id_name);
@@ -238,6 +240,7 @@ function sendImageToServer() {
         const image_data = thumbnails_filters[thumbnail_to_send].original_img;
         const selectedFilters = thumbnails_filters[thumbnail_to_send].filters;
         const brightness = thumbnails_filters[thumbnail_to_send].brightness;
+        exportMarkersFromImage();
 
         /** IMAGE DATA FROM THUMBNAIL: */
         //const image_data = document.getElementById(thumbnail.currentlyChosen).src;
@@ -264,12 +267,17 @@ let ImageSender = function(data, selectedFilters, brightness, name) {
     this.async = true;
 
     console.log("Applied filters TO SEND: " + selectedFilters);
+    let actualMarkers = false;
+    if (thumbnail.currentlyChosen in markers_array) {
+        actualMarkers = markers_array[thumbnail.currentlyChosen];
+    }
     this.data = JSON.stringify({
         type: 'imageFromClient',
         filters: selectedFilters,
-        clientsId: thisUser.id,
-        imageData: data,
-        brightness: brightness
+        clientsId : thisUser.id,
+        markers: actualMarkers,
+        brightness: brightness,
+        imageData: data
     });
 
     this.init = function () {
@@ -293,13 +301,17 @@ function changeChosenImageByClick(image) {
     console.log("Applied filters: " + img_object.filters + ' to image with id ' + image.id);
     changeCheckBoxes(img_object.filters);
     changeSlider(img_object.brightness);
+    exportMarkersFromImage();
     currentlyChosenImageIdHandler(image.id);
     $('#uploaded_image').attr('src', image.src);
+    refreshMarkerImageAndMarkers();
 }
 
 function removeImageById(imageId) {
     if (imageId === thumbnail.currentlyChosen) {
         $('#uploaded_image').attr('src', "");
+        imageWithMarkers.imgNotes("destroy");
+        imageWithMarkers = false;
         currentlyChosenImageIdHandler(false);
     }
     $(document.getElementById(imageId)).closest('div').remove();
@@ -310,6 +322,8 @@ function removeImageById(imageId) {
 function removeImageFromList(button) {
     let imageId = $(button).closest('div').find('img').attr('id');
     removeImageById(imageId);
+    if (imageId in markers_array)
+        delete markers_array[imageId];
 }
 
 function changeCheckBoxes(applied_filters) {

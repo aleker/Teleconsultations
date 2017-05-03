@@ -91,11 +91,18 @@ const requestHandler = (request, response) => {
                     case 'imageFromClient': {
                         // SEND IMAGE ON BROADCAST:
                         const dataToSendOnBroadcast = json_message.imageData;
+                        const sentMarkers = json_message.markers;
                         const sender = json_message.clientsId;
                         const selectedImageFilters = json_message.filters;
                         const brightnessImage = json_message.brightness;
                         // broadcast message to all connected clients except sender
-                        const json = JSON.stringify({type: 'image', imageData: dataToSendOnBroadcast, filters: selectedImageFilters, brightness: brightnessImage});
+                        const json = JSON.stringify({
+                            type: 'image',
+                            imageData: dataToSendOnBroadcast,
+                            filters: selectedImageFilters,
+                            markers: sentMarkers,
+                            brightness: brightnessImage
+                        });
                         for (let [key, value] of clientsMap) {
                             if (key === sender) continue;
                             value.fd.sendUTF(json);

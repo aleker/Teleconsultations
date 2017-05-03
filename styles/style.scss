@@ -26,6 +26,7 @@ $grey: #586E72;
 }
 
 body {
+  zoom: 1;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -236,6 +237,9 @@ img.zoom{
     max-height:100%;
     max-width:100%;
     //z-index: -1;
+
+  opacity: 0.0;
+  filter: alpha(opacity=50); /* For IE8 and earlier */
   }
 
 .button {
@@ -297,3 +301,20 @@ input[type="file"]{
   right: -20px;
 }
 
+.marker{
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: -13px;
+  top: -35px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 25px;
+  letter-spacing: -1px;
+  text-align: center;
+  color: transparent;
+}
+
+.marker.black{
+  background: url(markerRed.svg);
+}
