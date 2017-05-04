@@ -1,0 +1,22 @@
+{
+  "server"  : {
+    "ip" : "0.0.0.0",
+    "port" : 8080
+  },
+
+  "msgHistoryMaxSize" : 100,
+  "imgHistoryMaxSize" : 10,
+
+  "colors" : [
+    "red",
+    "green",
+    "blue",
+    "magenta",
+    "purple",
+    "plum",
+    "orange"
+  ],
+
+  "pathForSavedImages" : "../images"
+
+}

@@ -56,6 +56,7 @@ function sendToPython(imageId) {
     }
     /** in other case when image we want to filter is not the current chosen image - read filters from thumbnails_filters */
     else currentFilters = thumbnails_filters[imageId].filters;
+    console.log("Applied filters to send to Python: " + currentFilters);
 
     let json_data = {'type': currentFilters, 'image': thumbnails_filters[imageId].original_img, 'brightness': thumbnails_filters[imageId].brightness};
 
@@ -83,7 +84,8 @@ function sendToPython(imageId) {
 /** this function reads notes from json and adds them to imageWithMarkers */
 function importMarkers(jsonMarkers) {
     if (jsonMarkers !== false && jsonMarkers.length > 0) {
-    imageWithMarkers.imgNotes("import", jsonMarkers);
+        imageWithMarkers.imgNotes("import", jsonMarkers);
+        console.log("Markers imported for: " + thumbnail.currentlyChosen + ". Count: " + jsonMarkers.length);
     }
 }
 
@@ -91,12 +93,13 @@ function importMarkers(jsonMarkers) {
 function exportMarkersFromImage() {
     if (imageWithMarkers !== false) {
         markers_array[thumbnail.currentlyChosen] = imageWithMarkers.imgNotes('export');
-        console.log(thumbnail.currentlyChosen + ' exported');
+        console.log("Markers exported for: " + thumbnail.currentlyChosen + ". Count: " + markers_array[thumbnail.currentlyChosen].length);
     }
 }
 
 /** this function turns off and on marker plugin (useful when image change) */
 function refreshMarkerImageAndMarkers() {
+    console.log("Refreshing image markers.");
     if (imageWithMarkers !== false) {
         imageWithMarkers.imgNotes("destroy");
     }
@@ -116,12 +119,18 @@ function refreshMarkerImageAndMarkers() {
         }
     });
     imageWithMarkers.imgNotes("option", "canEdit", true);
-    if (thumbnail.currentlyChosen in markers_array)
-        importMarkers(markers_array[thumbnail.currentlyChosen]);
-}
+    if (thumbnail.currentlyChosen in markers_array) {
+        console.log("Old markers imported for: " + thumbnail.currentlyChosen + ' if not empty: ');
 
+        importMarkers(markers_array[thumbnail.currentlyChosen]);
+    }
+}
 
 function updateSlider() {
     sendToPython(thumbnail.currentlyChosen);
 }
 
+function changeSlider(brightness) {
+    $('input[type=hidden]').val(brightness);
+    $('input[name=slide]').val(brightness);
+}

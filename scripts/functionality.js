@@ -97,10 +97,10 @@ $(function () {
                 json_message.data.color, new Date(json_message.data.time));
         }
         else if (json_message.type === 'image') {
-            console.log("I RECEIVED AN IMAGE!!!!");
+            console.log("IMAGE RECEIVED.");
             const newImageId = createImageContainer(json_message.imageData, json_message.filters, json_message.brightness);
-            changeSlider(json_message.brightness);
             markers_array[newImageId] = json_message.markers;
+            changeSlider(json_message.brightness);
             sendToPython(newImageId);
         }
         else {
@@ -183,6 +183,7 @@ function readURL(input) {
  * Create new 'div' and 'img' for uploaded file
  */
 function createImageContainer(imgData, filters, imageBrightness) {
+    console.log("Creating image container.");
     const newThumbnail = document.createElement("div");
     newThumbnail.setAttribute("class", "thumbnail");
 
@@ -202,7 +203,6 @@ function createImageContainer(imgData, filters, imageBrightness) {
     newThumbnail.appendChild(newImage);
     document.getElementById("thumbnail_container").appendChild(newThumbnail);
 
-
     let json_obj = {};
     json_obj.filters = ['none'];
     json_obj.brightness = 100;
@@ -210,15 +210,6 @@ function createImageContainer(imgData, filters, imageBrightness) {
     if (imageBrightness !== false) { json_obj.brightness = imageBrightness; }
     json_obj.original_img = imgData;
     thumbnails_filters[id_name] = json_obj;
-    console.log(thumbnails_filters[id_name].filters);
-
-    if (thumbnail.currentlyChosen === false) {
-        changeChosenImageByClick(newImage);
-        $('#uploaded_image').attr('src', imgData);
-        refreshMarkerImageAndMarkers();
-    }
-
-    console.log("New div added with id: " + id_name);
 
     return id_name;
 }
@@ -250,7 +241,6 @@ function sendImageToServer() {
         // image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
 
         let request = new ImageSender(image_data, selectedFilters, brightness, "");
-        request.init();
         request.send();
     }
 }
@@ -266,11 +256,14 @@ let ImageSender = function(data, selectedFilters, brightness, name) {
     this.dataType = 'text/html';
     this.async = true;
 
-    console.log("Applied filters TO SEND: " + selectedFilters);
     let actualMarkers = false;
     if (thumbnail.currentlyChosen in markers_array) {
         actualMarkers = markers_array[thumbnail.currentlyChosen];
     }
+    console.log("Applied filters to send to server: " + selectedFilters);
+    console.log("Applied markers count to send to server: " + actualMarkers.length);
+
+
     this.data = JSON.stringify({
         type: 'imageFromClient',
         filters: selectedFilters,
@@ -286,7 +279,7 @@ let ImageSender = function(data, selectedFilters, brightness, name) {
         //Open first, before setting the request headers.
         this.server.open(this.method, this.url, this.async);
         // this.server.setRequestHeader('Content-length', this.data.length);
-        console.log("XMLHttpRequest created.");
+        console.log("XMLHttpRequest created. Ready to send image.");
         return true;
     };
     this.send = function () {
@@ -298,7 +291,6 @@ let ImageSender = function(data, selectedFilters, brightness, name) {
 
 function changeChosenImageByClick(image) {
     let img_object = thumbnails_filters[image.id];
-    console.log("Applied filters: " + img_object.filters + ' to image with id ' + image.id);
     changeCheckBoxes(img_object.filters);
     changeSlider(img_object.brightness);
     exportMarkersFromImage();
@@ -333,9 +325,4 @@ function changeCheckBoxes(applied_filters) {
         else
             $(this).prop('checked', false);
     });
-}
-
-function changeSlider(brightness) {
-    $('input[type=hidden]').val(brightness);
-    $('input[name=slide]').val(brightness);
 }

@@ -11,31 +11,32 @@ const url = require('url');
 const path = require('path');
 const http = require('http');
 const webSocketServer = require('websocket').server;
+const config = require('../tsconfig.json');     // config file
 
 /**
  * Global variables
  */
 
 // Hostname and port where we'll run the websocket server
-const hostname = process.argv[2] || '0.0.0.0';
-const port = process.argv[3] || 8080;
+const hostname = config.server.ip || process.argv[2] || '0.0.0.0';
+const port = config.server.port || process.argv[3] || 8080;
 
 // latest historyMaxSize chat messages
 let history = [];
-const historyMaxSize = -100;
+const historyMaxSize = -1 * config.msgHistoryMaxSize;
 // latest imgHistoryMaxSize image messages:
 let imgHistory= [];
-const imgHistoryMaxSize = -10;
+const imgHistoryMaxSize = -1 * config.imgHistoryMaxSize;
 // list of currently connected clients (users)
 let indexOfClient = 0;
 let clientsMap = new Map();
 // Array with some colors
-const colors = ['red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange'];
+const colors = config.colors;
 // ... in random order
 colors.sort(function (a, b) {
     return Math.random() > 0.5;
 });
-const pathForSavedImages = '../images';
+const pathForSavedImages = config.pathForSavedImages;
 
 /**
  * removes old files(images) from directory
