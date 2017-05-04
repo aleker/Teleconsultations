@@ -9,9 +9,10 @@
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
-const http = require('http');
+//const http = require('http');
 const webSocketServer = require('websocket').server;
-const config = require('../tsconfig.json');     // config file
+const config = require('../tsconfig.json');
+var https = require("https");     // config file
 
 /**
  * Global variables
@@ -186,7 +187,13 @@ const requestHandler = (request, response) => {
  * HTTP server
  */
 
-const server = http.createServer(requestHandler);
+var options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
+
+// const server = http.createServer(requestHandler);
+const server = https.createServer(options, requestHandler);
 server.listen(port, hostname, function () {
     console.log((new Date()) + " Server is listening on port " + port);
 });
