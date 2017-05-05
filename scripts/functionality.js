@@ -85,7 +85,7 @@ $(function () {
             $('#loginPanel').hide();
             $('#application').show();
             if (json_message.conferenceExists === false) {
-                createConferenceRoom();
+                setupNewConference();
             }
             // from now user can start sending messages
         }
@@ -172,86 +172,107 @@ $(function () {
      * WebCam
      */
 
-    var config = {
-        openSocket: function (config) {
-            // TODO co z webrtcweb
-            var SIGNALING_SERVER = 'https://webrtcweb.com:9559/',
-                defaultChannel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
-            var channel = config.channel || defaultChannel;
-            var sender = Math.round(Math.random() * 999999999) + 999999999;
-            io.connect(SIGNALING_SERVER).emit('new-channel', {
-                channel: channel,
-                sender: sender
-            });
-            var socket = io.connect(SIGNALING_SERVER + channel);
-            socket.channel = channel;
-            socket.on('connect', function () {
-                if (config.callback) config.callback(socket);
-            });
-            socket.send = function (message) {
-                socket.emit('message', {
-                    sender: sender,
-                    data: message
-                });
-            };
-            socket.on('message', config.onmessage);
-        },
-        onRemoteStream: function (media) {
-            var video = media.video;
-            video.setAttribute('controls', true);
-            video.setAttribute('position', 'relative');
-            video.setAttribute('id', media.stream.id);
-            video.setAttribute('muted', true);
-            videosContainer.insertBefore(video, videosContainer.firstChild);
-            video.play();
-        },
-        onRemoteStreamEnded: function (stream) {
-            var video = document.getElementById(stream.id);
-            if (video) video.parentNode.removeChild(video);
-        },
-        onRoomFound: function (room) {
-            console.log("Conference room found.");
-            var alreadyExist = document.querySelector('button[data-broadcaster="' + room.broadcaster + '"]');
-            if (alreadyExist) return;
-            captureUserMedia(function () {
-                conferenceUI.joinRoom({
-                    roomToken: room.broadcaster,
-                    joinUser: room.broadcaster
-                });
-            });
-        }
+    var RTCconnection = new RTCMultiConnection();
+
+    RTCconnection.session = {
+        audio: true,
+        video: true
     };
-    var conferenceUI = conference(config);
+
+    RTCconnection.onstream = function(e) {
+        e.mediaElement.width = 600;
+        videosContainer.insertBefore(e.mediaElement, videosContainer.firstChild);
+        rotateVideo(e.mediaElement);
+        scaleVideos();
+    };
+
+    function rotateVideo(mediaElement) {
+        mediaElement.style[navigator.mozGetUserMedia ? 'transform' : '-webkit-transform'] = 'rotate(0deg)';
+        setTimeout(function() {
+            mediaElement.style[navigator.mozGetUserMedia ? 'transform' : '-webkit-transform'] = 'rotate(360deg)';
+        }, 1000);
+    }
+
+    RTCconnection.onstreamended = function(e) {
+        e.mediaElement.style.opacity = 0;
+        rotateVideo(e.mediaElement);
+        setTimeout(function() {
+            if (e.mediaElement.parentNode) {
+                e.mediaElement.parentNode.removeChild(e.mediaElement);
+            }
+            scaleVideos();
+        }, 1000);
+    };
+
+    var sessions = {};
+    RTCconnection.onNewSession = function(session) {
+        if (sessions[session.sessionid]) return;
+        if (!session) throw 'No such session exists.';
+        RTCconnection.join(session);
+    };
+
     var videosContainer = document.getElementById('videos-container') || document.body;
     var roomsList = document.getElementById('rooms-list');
 
-    function createConferenceRoom() {
-        //this.disabled = true;
-        captureUserMedia(function () {
-            conferenceUI.createRoom({
-                roomName: 'Teleconference'
-            });
-        });
+    //document.getElementById('setup-new-conference').onclick =
+    function setupNewConference() {
+        RTCconnection.sessionid = (Math.random() * 999999999999).toString().replace('.', '');
+        RTCconnection.extra = {
+            //'session-name': document.getElementById('conference-name').value || 'Anonymous'
+            'session-name': 'Teleconference'
+        };
+        RTCconnection.open();
     }
 
-    function captureUserMedia(callback) {
-        var video = document.createElement('video');
-        video.setAttribute('autoplay', true);
-        video.setAttribute('controls', true);
-        videosContainer.insertBefore(video, videosContainer.firstChild);
-        getUserMedia({
-            video: video,
-            onsuccess: function (stream) {
-                config.attachStream = stream;
-                video.setAttribute('muted', true);
-                video.setAttribute('controls', true);
-                callback();
-            },
-            onerror: function() {
-                alert('unable to get access to your webcam');
-            }
-        });
+    function leaveConference() {
+        roomsList.innerHTML = '';
+        sessions = {};
+        RTCconnection.leave();
     }
+
+    // setup signaling to search existing sessions
+    RTCconnection.connect();
+
+    (function() {
+        var uniqueToken = document.getElementById('unique-token');
+        if (uniqueToken)
+            if (location.hash.length > 2) uniqueToken.parentNode.parentNode.parentNode.innerHTML = '<h2 style="text-align:center;"><a href="' + location.href + '" target="_blank">Share this link</a></h2>';
+            else uniqueToken.innerHTML = uniqueToken.parentNode.parentNode.href = '#' + (Math.random() * new Date().getTime()).toString(36).toUpperCase().replace(/\./g, '-');
+    })();
+
+    function scaleVideos() {
+        var videos = document.querySelectorAll('video'),
+            length = videos.length,
+            video;
+
+        var minus = 130;
+        var windowHeight = 700;
+        var windowWidth = 600;
+        var windowAspectRatio = windowWidth / windowHeight;
+        var videoAspectRatio = 4 / 3;
+        var blockAspectRatio;
+        var tempVideoWidth = 0;
+        var maxVideoWidth = 0;
+
+        for (var i = length; i > 0; i--) {
+            blockAspectRatio = i * videoAspectRatio / Math.ceil(length / i);
+            if (blockAspectRatio <= windowAspectRatio) {
+                tempVideoWidth = videoAspectRatio * windowHeight / Math.ceil(length / i);
+            } else {
+                tempVideoWidth = windowWidth / i;
+            }
+            if (tempVideoWidth > maxVideoWidth)
+                maxVideoWidth = tempVideoWidth;
+        }
+        for (var i = 0; i < length; i++) {
+            video = videos[i];
+            if (video)
+                video.width = maxVideoWidth - minus;
+        }
+    }
+
+    window.onresize = scaleVideos;
+
 });
 
 /**

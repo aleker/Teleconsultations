@@ -14,13 +14,17 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" media="screen">
 
     <!--WebCam-->
-    <script src="//cdn.webrtc-experiment.com/socket.io.js"> </script>
-    <script src="//cdn.webrtc-experiment.com/RTCPeerConnection-v1.5.js"> </script>
-    <script src="//cdn.webrtc-experiment.com/video-conferencing/conference.js"> </script>
 
     <script src="./scripts/functionality.js"></script>
     <script src="./scripts/image_processing.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/style.css">
+
+    <link rel="author" type="text/html" href="https://plus.google.com/+MuazKhan">
+    <!--<link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">-->
+
+    <!-- scripts used for broadcasting (webRTC - camera) -->
+    <script src="https://cdn.webrtc-experiment.com/firebase.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/RTCMultiConnection.js"></script>
 
 </head>
 <body>
@@ -75,9 +79,7 @@
         </div>
         <div id="thumbnail_container" class="scroll sidebar-div"></div>
 
-        <table style="width: 100%;" id="rooms-list"></table>
         <div id="videos-container"></div>
-
     </div>
 </div>
 

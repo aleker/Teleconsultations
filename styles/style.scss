@@ -361,10 +361,17 @@ span {
   margin-left: -50px;
 }
 
+audio,
 video {
+  -moz-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -webkit-transition: all 1s ease;
+  transition: all 1s ease;
+  vertical-align: top;
+
   position: relative;
   width: 45%;
-  //max-height: 100%;
 }
 
 #videos-container {
