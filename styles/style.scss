@@ -142,6 +142,7 @@ Main boxes settings
   }
 
   #sidebar{
+    overflow-y: scroll;
     height:100vh;
     display: inline-block;
 
@@ -187,7 +188,7 @@ Main boxes settings
 
     div.scroll {
       width: 100%;
-      height: $scroll-thumbnail_container-height;
+      max-height: 40%;
       overflow: scroll;
       overflow-x: hidden;
 
@@ -205,8 +206,6 @@ Main boxes settings
     }
   }
 }
-
-
 
 .cursor {
   cursor: pointer;
@@ -365,4 +364,9 @@ span {
 video {
   position: relative;
   width: 45%;
+  //max-height: 100%;
+}
+
+#videos-container {
+  position: relative;
 }

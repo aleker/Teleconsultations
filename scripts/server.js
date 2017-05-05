@@ -117,16 +117,6 @@ const requestHandler = (request, response) => {
                         }
                         imgHistory.push(json);
                         imgHistory.slice(imgHistoryMaxSize);
-
-                        // TODO removing saving image on server:
-                        // SAVE IMAGE ON SERVER SIDE:
-                        // const imageName = 'example.jpg';
-                        // const base64Data = dataToSendOnBroadcast.substring(dataToSendOnBroadcast.indexOf("base64,") + 7);
-                        // fs.writeFile(pathForSavedImages + '/' + imageName, base64Data, 'base64', function (err) {
-                        //     if (err) throw err;
-                        //     console.log('IMAGE file saved');
-                        // });
-                        // ---------------------------------------
                         break;
                     }
                     default:
