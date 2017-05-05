@@ -9,6 +9,8 @@ import cgi
 
 
 class RequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        print("Received config GET")
 
     def do_POST(self):
         print("\n----- Request Start ----->\n")

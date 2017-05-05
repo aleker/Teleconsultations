@@ -14,6 +14,17 @@ let thisUser = {
 $(function () {
     "use strict";
 
+    console.log("xd");
+    $.ajax({
+        type: "GET",
+        url: "https://localhost:9000/",
+        success: function (response) {
+            console.log("python config");
+        }
+    });
+
+
+
     /**
      * Global variables
      */
