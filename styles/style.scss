@@ -49,7 +49,7 @@ p {
   @for $i from 1 through 12 {
     .column-small-#{$i} {
       width: 100% / 12 * $i;
-      border:1px solid #af2da6;
+      //border:1px solid #af2da6;
       max-width: 100% / 12 * $i;
     }
     #sidebar{
@@ -64,7 +64,7 @@ p {
   @for $i from 1 through 12 {
     .column-medium-#{$i} {
       width: 100% / 12 * $i;
-      border:1px solid #af2da6;
+      //border:1px solid #af2da6;
     }
     //.chat {
     //  width: $chat-constant-width;
@@ -76,7 +76,7 @@ p {
   @for $i from 1 through 12 {
     .column-big-#{$i} {
       width: 100% / 12 * $i;
-      border: 1px solid #af2da6;
+      //border: 1px solid #af2da6;
     }
     //.chat {
     //  width: $chat-constant-width;
@@ -91,7 +91,7 @@ Main Login Panel
 #loginPanel {
   text-align: center;
   margin: auto;
-  border: 3px solid green;
+  //border: 3px solid green;
   padding: 10px;
 
   .chat-status {
@@ -145,6 +145,7 @@ Main boxes settings
     overflow-y: scroll;
     height:100vh;
     display: inline-block;
+    border-left: 1px solid #af2da6;
 
     /**
    * Chat display setting
