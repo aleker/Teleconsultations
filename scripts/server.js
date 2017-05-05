@@ -9,7 +9,7 @@
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
-const http = require('http');
+const https = require('https');
 const webSocketServer = require('websocket').server;
 const config = require('../tsconfig.json');     // config file
 
@@ -37,6 +37,11 @@ colors.sort(function (a, b) {
     return Math.random() > 0.5;
 });
 const pathForSavedImages = config.pathForSavedImages;
+
+var options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
 
 /**
  * removes old files(images) from directory
@@ -186,7 +191,7 @@ const requestHandler = (request, response) => {
  * HTTP server
  */
 
-const server = http.createServer(requestHandler);
+const server = https.createServer(options, requestHandler);
 server.listen(port, hostname, function () {
     console.log((new Date()) + " Server is listening on port " + port);
 });

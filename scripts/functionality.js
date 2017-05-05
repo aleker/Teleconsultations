@@ -42,7 +42,7 @@ $(function () {
     // open connection
     const server_host_port = window.location.host;
     console.log("Connecting to host: " + server_host_port);
-    connection = new WebSocket('ws://' + server_host_port);
+    connection = new WebSocket('wss://' + server_host_port);
 
     /**
      * Connection listeners. Receive message from server and handle errors.

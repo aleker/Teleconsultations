@@ -1,6 +1,6 @@
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 import json
-
+import ssl
 from urlparse import parse_qs
 from image_processing import ImageHandler
 import argparse
@@ -56,5 +56,6 @@ def parse():
 if __name__ == "__main__":
     args = parse()
     print('Server running on: ' + args.ip_address + " port: " + str(args.port))
-    server = HTTPServer((args.ip_address, args.port), RequestHandler)
+    server = HTTPServer((args.ip_address, int(args.port)), RequestHandler)
+    server.socket = ssl.wrap_socket (server.socket, certfile='server.pem', server_side=True)
     server.serve_forever()

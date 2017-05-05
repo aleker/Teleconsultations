@@ -62,7 +62,7 @@ function sendToPython(imageId) {
 
     $.ajax({
         type: "POST",
-        url: "http://localhost:9000",
+        url: "https://localhost:4443",
         data: json_data,
         success: function (response) {
             $('#' + imageId).attr('src', response.data);
