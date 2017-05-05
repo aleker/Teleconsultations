@@ -1,3 +1,4 @@
+#openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 import json
 import ssl
@@ -8,6 +9,7 @@ import cgi
 
 
 class RequestHandler(BaseHTTPRequestHandler):
+
     def do_POST(self):
         print("\n----- Request Start ----->\n")
 
