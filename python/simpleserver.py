@@ -1,15 +1,22 @@
 #openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from image_processing import ImageHandler
+from urlparse import parse_qs
 import json
 import ssl
-from urlparse import parse_qs
-from image_processing import ImageHandler
 import argparse
 import cgi
 
 class RequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(s):
         print("Received config GET")
+        s.send_response(200)
+        s.send_header("Content-type", "text/html")
+        s.end_headers()
+        s.wfile.write("<html><head><title>Site check.</title></head>")
+        s.wfile.write("<body><p>This is a test.</p>")
+        s.wfile.write("<p>You accessed path: %s</p>" % s.path)
+        s.wfile.write("</body></html>")
 
     def do_POST(self):
         print("\n----- Request Start ----->\n")
@@ -44,21 +51,20 @@ class RequestHandler(BaseHTTPRequestHandler):
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-p',
-        '--port',
-        default=9000
-    )
-    parser.add_argument(
-        '-a',
-        '--ip_address',
-        default=''
+        '-c',
+        '--config',
+        default='../tsconfig.json'
     )
     return parser.parse_args()
 
-
 if __name__ == "__main__":
     args = parse()
-    print('Server running on: ' + args.ip_address + " port: " + str(args.port))
-    server = HTTPServer((args.ip_address, int(args.port)), RequestHandler)
+    # Parse config file
+    with open(args.config, 'r') as f:
+        config = json.load(f)
+    address = config['server']['ip']
+    port = int(config['python_port'])
+    print('Server running on: ' + address + " port: " + str(port))
+    server = HTTPServer((address, port), RequestHandler)
     server.socket = ssl.wrap_socket (server.socket, certfile='server.pem', server_side=True)
     server.serve_forever()

@@ -1,11 +1,12 @@
 {
   "server"  : {
-    "ip" : "0.0.0.0",
+    "ip" : "192.168.0.30",
     "port" : 8080
   },
 
   "msgHistoryMaxSize" : 100,
   "imgHistoryMaxSize" : 10,
+  "python_port"       : 9000,
 
   "colors" : [
     "red",

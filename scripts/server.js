@@ -253,8 +253,13 @@ wsServer.on('request', function (request) {
                     userName = json_message.data;
                     // get random color and send it back to the user
                     userColor = colors.shift();
-                    if (userColor == false) userColor = 'black';
-                    connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId, conferenceExists: conferenceExists}));
+                    if (userColor === false) userColor = 'black';
+                    connection.sendUTF(JSON.stringify({
+                        type: 'color_id',
+                        data: userColor,
+                        id: userId,
+                        conferenceExists: conferenceExists,
+                        python_port: config.python_port}));
                     // TODO that way conference = true?
                     conferenceExists = true;
                     console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');

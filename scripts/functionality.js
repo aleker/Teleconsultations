@@ -1,5 +1,6 @@
 let connection = false;
 let imageWithMarkers = false;
+let python_port = false;
 let thumbnail = new function() {
     this.imageCounter = 0;
     this.currentlyChosen = false;
@@ -7,23 +8,12 @@ let thumbnail = new function() {
 
 let thisUser = {
     name : false,       // name sent to the server
-    color : false,       // color assigned by the server
+    color : false,      // color assigned by the server
     id : false
 };
 
 $(function () {
     "use strict";
-
-    console.log("xd");
-    $.ajax({
-        type: "GET",
-        url: "https://localhost:9000/",
-        success: function (response) {
-            console.log("python config");
-        }
-    });
-
-
 
     /**
      * Global variables
@@ -89,6 +79,7 @@ $(function () {
         if (json_message.type === 'color_id') { // first response from the server with user's color
             thisUser.color = json_message.data;
             thisUser.id = json_message.id;
+            python_port = json_message.python_port;
             chat.status.text(thisUser.name + ': ').css('color', thisUser.color);
             chat.input.removeAttr('disabled').focus();
             $('#loginPanel').hide();
@@ -262,7 +253,6 @@ $(function () {
         });
     }
 });
-
 
 /**
  * Upload image

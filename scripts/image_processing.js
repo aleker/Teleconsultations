@@ -1,7 +1,6 @@
 let thumbnails_filters = {};
 let markers_array = {};
 $(function() {
-
     $(' #python_container input').on('click', function(){
         sendToPython(thumbnail.currentlyChosen);
     });
@@ -37,15 +36,8 @@ $(function() {
 // PYTHON
 function sendToPython(imageId) {
     exportMarkersFromImage();
-    // TODO DIFFERENT IMAGE PROCESSING METHODS
-    // get id of currently chosen thumbnail:
     const currentlyChosenId = thumbnail.currentlyChosen;
     thumbnails_filters[imageId].brightness = $('input[name=slide]').val();
-
-    // TODO remove unused code:
-    // let image_data = $('#uploaded_image').css('background-image');
-    // //console.log(image_data);
-    // image_data = image_data.replace('url(','').replace(')','').replace(/\"/gi, "");
 
     let currentFilters = ['none'];
     /** if currently chosen image is the one we want to filter - read filters from checkboxes */
@@ -60,9 +52,10 @@ function sendToPython(imageId) {
 
     let json_data = {'type': currentFilters, 'image': thumbnails_filters[imageId].original_img, 'brightness': thumbnails_filters[imageId].brightness};
 
+    console.log("https://" +  window.location.hostname+ ":" + python_port + "/");
     $.ajax({
         type: "POST",
-        url: "https://localhost:9000/",
+        url: "https://" +  window.location.hostname + ":" + python_port + "/",
         data: json_data,
         success: function (response) {
             $('#' + imageId).attr('src', response.data);
@@ -80,8 +73,7 @@ function sendToPython(imageId) {
  * MARKERS HANDLER
  */
 
-
-/** this function reads notes from json and adds them to imageWithMarkers */
+/**from urlparse import parse_qs this function reads notes from json and adds them to imageWithMarkers */
 function importMarkers(jsonMarkers) {
     if (jsonMarkers !== false && jsonMarkers.length > 0) {
         imageWithMarkers.imgNotes("import", jsonMarkers);
@@ -130,16 +122,22 @@ function updateSlider() {
     sendToPython(thumbnail.currentlyChosen);
 }
 
+/**
+ * Changes the brightness slider automatically after receiving a new image.
+ * @param brightness Current brightness level.
+ */
 function changeSlider(brightness) {
     $('input[type=hidden]').val(brightness);
     $('input[name=slide]').val(brightness);
 }
 
+/**
+ * Displaying a message bubble that confirms sending the image.
+ */
 function sendConfirmationMessage(){
     console.log('sendCOnf');
     $('.messageBubble').css("visibility", "visible");
     $('.messageBubble').css("opacity", "100");
-
     $('.messageBubble').fadeTo( 3000, 0, function () {
         $('.messageBubble').css("visibility", "hidden");
     });

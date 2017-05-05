@@ -14,10 +14,6 @@ class ImageHandler():
         self.image_type = img_data[:index]
         self.brightness = float(brightness) / 100.0
 
-        # Saving image to file
-        with open("original_image.png", "wb") as f:
-            f.write(decodestring(self.image_data))
-
     def encode_to_base64(self, processed_image):
         output = StringIO()
         processed_image.save(output, format='JPEG')
