@@ -1,9 +1,9 @@
 #openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from image_processing import ImageHandler
+from urlparse import parse_qs
 import json
 import ssl
-from urlparse import parse_qs
-from image_processing import ImageHandler
 import argparse
 import cgi
 

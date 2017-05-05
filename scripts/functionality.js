@@ -8,7 +8,7 @@ let thumbnail = new function() {
 
 let thisUser = {
     name : false,       // name sent to the server
-    color : false,       // color assigned by the server
+    color : false,      // color assigned by the server
     id : false
 };
 
@@ -165,7 +165,6 @@ $(function () {
             + ': ' + message + '</p>');
     }
 });
-
 
 /**
  * Upload image
