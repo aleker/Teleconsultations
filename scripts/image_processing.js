@@ -134,3 +134,14 @@ function changeSlider(brightness) {
     $('input[type=hidden]').val(brightness);
     $('input[name=slide]').val(brightness);
 }
+
+function sendConfirmationMessage(){
+    console.log('sendCOnf');
+    $('.messageBubble').css("visibility", "visible");
+    $('.messageBubble').css("opacity", "100");
+
+    $('.messageBubble').fadeTo( 3000, 0, function () {
+        $('.messageBubble').css("visibility", "hidden");
+    });
+
+}

@@ -8,7 +8,6 @@
     <script src="libraries/jquery.ui.rotatable.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="libraries/wheelzoom.js"></script>
-
     <script type="text/javascript" src="libraries/jquery.mousewheel.min.js"></script>
     <script type="text/javascript" src="libraries/imgViewer.js"></script>
     <script type="text/javascript" src="libraries/imgNotes.js"></script>
@@ -35,24 +34,25 @@
                 <!--<img class='zoom' id="uploaded_image" src="http://i.imgur.com/uxFECXo.jpg" alt="your image" onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>-->
                 <img class='zoom' id="uploaded_image" src="#" alt="your image"
                      onerror="this.src='https://furtaev.ru/preview/upload_small.png'"/>
+                <span class="messageBubble">Picture sent!</span>
             </div>
         </div>
     </div>
     <div id="sidebar" class="column-big-3 column-medium-3 column-small-12">
-        <div class="chat">
+        <div class="chat sidebar-div">
             <div id="chat-window"></div>
             <div>
                 <span class="chat-status">Connecting...</span>
                 <input type="text" class="chat-input" disabled="disabled"/>
             </div>
         </div>
-        <div>
+        <div id="button_div" class="sidebar-div">
             <label class="button" id="upload_image_label"> Upload picture
                 <input type='file' id="readFileButton" onchange="readURL(this)" />
             </label>
-        </div>
         <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
-        <div id="python_container">
+        </div>
+        <div id="python_container" class="sidebar-div">
             <label>
                 <input type="checkbox" value="invert">
             </label>Invert colours<br>
@@ -62,18 +62,18 @@
             <label>
                 <input type="checkbox" value="edges">
             </label>Edge detection<br>
-            <div id="slider">Brightness<input name="slide" type="range" min="0" max="200" step="5" value="100" onchange="updateSlider()" /></div>
+            <div id="slider">
+                <input name="slide" type="range" min="0" max="200" step="5" value="100" onchange="updateSlider()" />
+                <span>Brightness</span>
+            </div>
             <!--<input type="submit" class="button" value="Apply filters" onclick="sendToPython(thumbnail.currentlyChosen)" />-->
             <input type=hidden id="hiddenValue" name="hiddenValue" value=100/>
         </div>
-
-        <div id="thumbnail_container" class="scroll">
-        </div>
+        <div id="thumbnail_container" class="scroll sidebar-div"></div>
+        <div id="video-container" class="sidebar-div"></div>
 
     </div>
 </div>
-
-
 
 </body>
 </html>

@@ -225,6 +225,7 @@ function currentlyChosenImageIdHandler(value) {
  */
 
 function sendImageToServer() {
+    sendConfirmationMessage();
     const thumbnail_to_send = thumbnail.currentlyChosen;
     if (thumbnail_to_send !== false) {
         /** ORIGINAL IMAGE DATA: */

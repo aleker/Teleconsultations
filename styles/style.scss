@@ -148,9 +148,14 @@ Main boxes settings
     /**
    * Chat display setting
    */
+    .sidebar-div{
+      width: 100%;
+      border-top: 1px solid #af2da6;
+    }
 
     .chat {
       width:100%;
+
 
       #chat-window {
         background: #ddd;
@@ -176,6 +181,10 @@ Main boxes settings
       }
     }
 
+    #python_container {
+      //text-align: center;
+    }
+
     div.scroll {
       width: 100%;
       height: $scroll-thumbnail_container-height;
@@ -187,6 +196,7 @@ Main boxes settings
         max-width:100%;
         padding: 10px;
         margin: 5px;
+        position: relative;
 
         img {
           max-width: 100%;
@@ -243,6 +253,9 @@ img.zoom{
   }
 
 .button {
+  min-width: 47%;
+  max-width: 47%;
+  max-height: 30px;
   background-color: white;
   color: black;
   border: 2px solid #af2da6;
@@ -260,6 +273,10 @@ img.zoom{
 .button:hover {
   background-color: #af2da6;
   color: white;
+}
+
+#button_div {
+  width:100%;
 }
 
 input[type="file"]{
@@ -317,4 +334,30 @@ input[type="file"]{
 
 .marker.black{
   background: url(markerRed.svg);
+}
+
+
+span {
+  text-align: center;
+}
+
+.messageBubble {
+  visibility: hidden;
+  width: 200px;
+  height: 70px;
+  background-color: #4CAF50;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 18px;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
 }
