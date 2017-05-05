@@ -93,6 +93,9 @@ $(function () {
             chat.input.removeAttr('disabled').focus();
             $('#loginPanel').hide();
             $('#application').show();
+            if (json_message.conferenceExists === false) {
+                createConferenceRoom();
+            }
             // from now user can start sending messages
         }
         else if (json_message.type === 'history') { // entire message history
@@ -172,6 +175,87 @@ $(function () {
             + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
             + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
             + ': ' + message + '</p>');
+    }
+
+    /**
+     * WebCam
+     */
+
+    var config = {
+        openSocket: function (config) {
+            // TODO co z webrtcweb
+            var SIGNALING_SERVER = 'https://webrtcweb.com:9559/',
+                defaultChannel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
+            var channel = config.channel || defaultChannel;
+            var sender = Math.round(Math.random() * 999999999) + 999999999;
+            io.connect(SIGNALING_SERVER).emit('new-channel', {
+                channel: channel,
+                sender: sender
+            });
+            var socket = io.connect(SIGNALING_SERVER + channel);
+            socket.channel = channel;
+            socket.on('connect', function () {
+                if (config.callback) config.callback(socket);
+            });
+            socket.send = function (message) {
+                socket.emit('message', {
+                    sender: sender,
+                    data: message
+                });
+            };
+            socket.on('message', config.onmessage);
+        },
+        onRemoteStream: function (media) {
+            var video = media.video;
+            video.setAttribute('controls', true);
+            video.setAttribute('position', 'relative');
+            video.setAttribute('id', media.stream.id);
+            videosContainer.insertBefore(video, videosContainer.firstChild);
+            video.play();
+        },
+        onRemoteStreamEnded: function (stream) {
+            var video = document.getElementById(stream.id);
+            if (video) video.parentNode.removeChild(video);
+        },
+        onRoomFound: function (room) {
+            console.log("Conference room found.");
+            var alreadyExist = document.querySelector('button[data-broadcaster="' + room.broadcaster + '"]');
+            if (alreadyExist) return;
+            captureUserMedia(function () {
+                conferenceUI.joinRoom({
+                    roomToken: room.broadcaster,
+                    joinUser: room.broadcaster
+                });
+            });
+        }
+    };
+    // TODO adding auto mute
+    var conferenceUI = conference(config);
+    var videosContainer = document.getElementById('videos-container') || document.body;
+    var roomsList = document.getElementById('rooms-list');
+
+    function createConferenceRoom() {
+        //this.disabled = true;
+        captureUserMedia(function () {
+            conferenceUI.createRoom({
+                roomName: 'Teleconference'
+            });
+        });
+    }
+
+    function captureUserMedia(callback) {
+        var video = document.createElement('video');
+        video.setAttribute('autoplay', true);
+        video.setAttribute('controls', true);
+        videosContainer.insertBefore(video, videosContainer.firstChild);
+        getUserMedia({
+            video: video,
+            onsuccess: function (stream) {
+                config.attachStream = stream;
+                video.setAttribute('muted', true);
+                callback();
+            }
+        });
     }
 });
 

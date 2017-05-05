@@ -13,6 +13,11 @@
     <script type="text/javascript" src="libraries/imgNotes.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" media="screen">
 
+    <!--WebCam-->
+    <script src="//cdn.webrtc-experiment.com/socket.io.js"> </script>
+    <script src="//cdn.webrtc-experiment.com/RTCPeerConnection-v1.5.js"> </script>
+    <script src="//cdn.webrtc-experiment.com/video-conferencing/conference.js"> </script>
+
     <script src="./scripts/functionality.js"></script>
     <script src="./scripts/image_processing.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -69,7 +74,9 @@
             <input type=hidden id="hiddenValue" name="hiddenValue" value=100/>
         </div>
         <div id="thumbnail_container" class="scroll sidebar-div"></div>
-        <div id="video-container" class="sidebar-div"></div>
+
+        <table style="width: 100%;" id="rooms-list"></table>
+        <div id="videos-container"></div>
 
     </div>
 </div>

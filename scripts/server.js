@@ -38,10 +38,12 @@ colors.sort(function (a, b) {
 });
 const pathForSavedImages = config.pathForSavedImages;
 
-var options = {
+const options = {
     key: fs.readFileSync('key.pem'),
     cert: fs.readFileSync('cert.pem')
 };
+
+let conferenceExists = false;
 
 /**
  * removes old files(images) from directory
@@ -252,7 +254,9 @@ wsServer.on('request', function (request) {
                     // get random color and send it back to the user
                     userColor = colors.shift();
                     if (userColor == false) userColor = 'black';
-                    connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId}));
+                    connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId, conferenceExists: conferenceExists}));
+                    // TODO that way conference = true?
+                    conferenceExists = true;
                     console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
                     // SENDING HISTORY:
                     // send back chat history
@@ -305,6 +309,9 @@ wsServer.on('request', function (request) {
             // push back user's color to be reused by another user
             colors.push(userColor);
             console.log((new Date()) + " Peer with id " + userId + " (" + userName + ") disconnected. " + clientsMap.size + " left.");
+            if (clientsMap.size <= 0) {
+                conferenceExists = false;
+            }
         }
     });
 

@@ -7,7 +7,6 @@ from image_processing import ImageHandler
 import argparse
 import cgi
 
-
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         print("Received config GET")
