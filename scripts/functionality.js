@@ -210,6 +210,7 @@ $(function () {
             video.setAttribute('controls', true);
             video.setAttribute('position', 'relative');
             video.setAttribute('id', media.stream.id);
+            video.setAttribute('muted', true);
             videosContainer.insertBefore(video, videosContainer.firstChild);
             video.play();
         },
@@ -229,7 +230,6 @@ $(function () {
             });
         }
     };
-    // TODO adding auto mute
     var conferenceUI = conference(config);
     var videosContainer = document.getElementById('videos-container') || document.body;
     var roomsList = document.getElementById('rooms-list');
@@ -253,7 +253,11 @@ $(function () {
             onsuccess: function (stream) {
                 config.attachStream = stream;
                 video.setAttribute('muted', true);
+                video.setAttribute('controls', true);
                 callback();
+            },
+            onerror: function() {
+                alert('unable to get access to your webcam');
             }
         });
     }
