@@ -60,9 +60,10 @@ function sendToPython(imageId) {
 
     let json_data = {'type': currentFilters, 'image': thumbnails_filters[imageId].original_img, 'brightness': thumbnails_filters[imageId].brightness};
 
+    console.log("https://" +  window.location.hostname+ ":" + python_port + "/");
     $.ajax({
         type: "POST",
-        url: "https://localhost:9000/",
+        url: "https://" +  window.location.hostname + ":" + python_port + "/",
         data: json_data,
         success: function (response) {
             $('#' + imageId).attr('src', response.data);

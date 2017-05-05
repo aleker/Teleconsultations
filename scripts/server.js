@@ -252,7 +252,7 @@ wsServer.on('request', function (request) {
                     // get random color and send it back to the user
                     userColor = colors.shift();
                     if (userColor == false) userColor = 'black';
-                    connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId}));
+                    connection.sendUTF(JSON.stringify({type: 'color_id', data: userColor, id: userId, python_port: config.python_port}));
                     console.log((new Date()) + ' User is known as: ' + userName + '(' + userId + ') with ' + userColor + ' color.');
                     // SENDING HISTORY:
                     // send back chat history
