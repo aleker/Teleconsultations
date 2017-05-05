@@ -9,9 +9,10 @@ by typing in
 npm install
 ```
 #### Setting the ssl connection
-Our server runs on https. To use it, you should first generate the certificates. RUn the following commands 
+Our server runs on https. To use it, you should first generate the certificates. Run the following commands 
 in the main project directory.
 ```
+cd scripts
 openssl genrsa -out key.pem
 openssl req -new -key key.pem -out csr.pem
 openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
@@ -55,6 +56,7 @@ pip2 install -r requirements.txt
 You should generate yet another certificate. 
 Run the command
 ```
+cd python
 openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
 ```
 Running the server
