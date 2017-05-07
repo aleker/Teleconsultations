@@ -27,14 +27,14 @@
 
 </head>
 <body>
-
+<!--LOGIN PANEL-->
 <div id="loginPanel">
     <div>
         <span class="chat-status">Connecting...</span>
         <input type="text" class="chat-input" disabled="disabled" autofocus/>
     </div>
 </div>
-
+<!--MAIN APPLICATION-->
 <div id="application">
     <div id="main-workspace" class="column-big-9 column-medium-9 column-small-12">
         <div id="workspace" class="box">
@@ -55,10 +55,17 @@
             </div>
         </div>
         <div id="button_div" class="sidebar-div">
-            <label class="button" id="upload_image_label"> Upload picture
-                <input type='file' id="readFileButton" onchange="readURL(this)" />
-            </label>
-        <input type="button" class="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
+            <div class="button">
+                <label id="upload_image_label" class="button_label"> Upload
+                    <input type='file' id="readFileButton" onchange="readURL(this)" />
+                </label>
+            </div>
+            <div class="button">
+                <label id="send_image_label" class="button_label"> Send
+                <input type="button" value="Send" id="sendImageButton" onclick="sendImageToServer()" disabled/>
+                </label>
+            </div>
+
         </div>
         <div id="python_container" class="sidebar-div">
             <label>
