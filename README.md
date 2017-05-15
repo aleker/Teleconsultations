@@ -1,6 +1,6 @@
 
-Run server
-==========
+Run nodejs server
+=================
 #### Installing the node-modules
 This server needs npm and Node.js installed. You can find the installation guides [here](https://docs.npmjs.com/getting-started/what-is-npm)
 Clone or download and extract the project and go to the main project directory. Then install the dependencies 
@@ -33,19 +33,7 @@ node server.js
 
 You can change the server parameters in a config file. See the "Configuration file" section below. 
 
-Run client application
-======================
-In order to run client application, go to web browser and type:
-
-```
-https://0.0.0.0:8080/index.html
-```
-
-where '0.0.0.0' is server's host and '8080' is the port server is listening on (both configurated in the config file)
-
-
-
-Python server
+Run python server
 ============
 Installing dependencies (Python 2.7)
 ```
@@ -64,6 +52,27 @@ Running the server
 cd python
 python2 simpleserver.py
 ```
+
+Nodejs and python servers in one command
+=========================================
+In order to run servers type:
+```
+./runServers.sh
+```
+In order to stop (kill) both servers type:
+```
+./killervers.sh
+```
+
+Run client application
+======================
+In order to run client application, go to web browser and type:
+
+```
+https://0.0.0.0:8080/index.html
+```
+
+where '0.0.0.0' is server's host and '8080' is the port server is listening on (both configurated in the config file)
 
 Configuration file
 =================
